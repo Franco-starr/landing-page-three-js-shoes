@@ -1,0 +1,97 @@
+/* RESET BÁSICO */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: black;
+  color: white;
+  font-family: system-ui, sans-serif;
+}
+
+.main {
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* =====================
+   HERO
+===================== */
+
+.hero {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  background-color: aquamarine;
+}
+
+.hero-cajita {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100vh;
+}
+
+
+.hero-title {
+  position: absolute;
+  text-align: center;
+  font-weight: 700;
+  margin-inline: 1rem;
+}
+
+.hero-title--top {
+  top: 5%;
+  font-size: 4rem;
+}
+
+.hero-title--bottom {
+  bottom: 5%;
+  font-size: 4rem;
+}
+
+.hero-canvas {
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* =====================
+   SPLIT SECTIONS
+===================== */
+
+.split {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 100vh;
+}
+
+.split-empty {
+  width: 50%;
+}
+
+.split-text {
+  width: 50%;
+  padding-inline: 1rem;
+  text-align: center;
+  font-size: 2.25rem;
+  font-weight: 600;
+}
+
+
+/*canvas*/
+#webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+   z-index: 10;           /* 👈 delante del HTML */
+  pointer-events: none; /* 👈 CLAVE: no bloquea scroll */
+}
+
+
