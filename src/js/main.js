@@ -54,7 +54,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 ========================= */
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
+controls.enableDamping = false;
 
 /* =========================
    HELPERS (solo para debug)
@@ -80,56 +80,19 @@ loader.load('/src/model/nike_air_zoom_pegasus_36.glb', (gltf) => {
       obj.receiveShadow = true; // recibe sombra (opcional)
     }
   });
-  
-   // 👉 mover zapatilla a la derecha
-  /*
-  shoes.rotation.x = -1;
-  */
-
+  shoes.rotation.y = 1
   // tamaño correcto
   shoes.scale.set(1.2, 1.2, 1.2);
   shoes.position.set(0, 0, 0);
   scene.add(shoes);
-  
 
-  const rotateTween = gsap.to(shoes.rotation, {
-  y: shoes.rotation.y + Math.PI * 2,
-  duration: 18,
-  ease: "none",
-  repeat: -1,
-  paused: true
-});
-
-ScrollTrigger.create({
-  trigger: ".hero",
-  start: "top bottom",
-  end: "bottom top",
-  onToggle: self => {
-    self.isActive ? rotateTween.play() : rotateTween.pause();
-  }
-});
-
-const shoesTimeline = gsap.timeline({
-  scrollTrigger: {
-    trigger: ".main",
-    start: "top top",
-    end: "bottom bottom",
-    scrub: 1
-  }
-});
-
-shoesTimeline
-  .to(shoes.position, { x: -1.5, ease: "none" }) // sección 1
-  .to(shoes.position, { x: 1.5, ease: "none" })  // sección 2
-  .to(shoes.position, { x: -1.2, ease: "none" });   // sección 3
-
-  // Hace que la cámara siempre mire al cubo
+  //updateResponsiveModel();
 
    /* =========================
      GSAP SCROLL ANIMATIONS
   ========================= */
-
- 
+  //heroIntro();           // animación inicial
+  horizontalAnimations(); // animaciones por sección
 });
 
 
@@ -186,17 +149,9 @@ scene.add(directionalLight);
 
 function animate() {
   requestAnimationFrame(animate);
-   //shoes.rotation.y += 0.01;
-   /*camara rotando
-   controls.enablePan = false;
-   controls.minDistance = 3;
-   controls.maxDistance = 10;
-   controls.autoRotate = true;
-   controls.autoRotateSpeed = 1.5;
-   */
-   
 
-  controls.update();
+
+ controls.update();
   renderer.render(scene, camera);
 }
 
@@ -213,3 +168,102 @@ window.addEventListener('resize', () => {
 
 });
 
+//gsap 
+
+function heroIntro() {
+
+  const spin = gsap.to(shoes.rotation, {
+    y: "+=" + Math.PI * 2,
+    duration: 20,
+    repeat: -1,
+    ease: "none",
+    paused: true
+  });
+
+  const move = gsap.to(shoes.position, {
+    x: 0,        // hacia la derecha
+    y: 0,        // un poco arriba
+    z: 0,
+    duration: 1.5,
+    ease: "power2.out",
+    paused: true
+  });
+
+  const trigger = ScrollTrigger.create({
+    trigger: ".hero-title",
+    start: "top center",
+    end: "bottom end",
+
+    onEnter: () => {
+      spin.play();
+      move.play();
+    },
+
+    onEnterBack: () => {
+      spin.play();
+      move.play();
+    },
+
+    onLeave: () => {
+      spin.pause();
+      move.reverse(); // vuelve a su lugar original
+    },
+
+    onLeaveBack: () => {
+      spin.pause();
+      move.reverse();
+    },
+  });
+
+  if (trigger.isActive) {
+    spin.play();
+    move.play();
+  }
+}
+function horizontalAnimations() {
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: "body",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 1
+    }
+  });
+
+  // HERO
+  tl.to(shoes.position, {
+    x: -1.5,
+    duration: 1
+  })
+  .to(shoes.rotation, {
+    y: "+=1.2"
+  }, "<");
+
+  // sección 2
+  tl.to(shoes.position, {
+    x: -0.5,
+    duration: 1
+  })
+  .to(shoes.rotation, {
+    y: "+=3.3"
+  }, "<");
+
+  // sección 3
+  tl.to(shoes.position, {
+    x: 0.8,
+    duration: 1
+  })
+  .to(shoes.rotation, {
+    y: "+=1.5"
+  }, "<");
+
+  // sección 4
+  tl.to(shoes.position, {
+    x: -1,
+    duration: 1
+  })
+  .to(shoes.rotation, {
+    y: "+=1.2"
+  }, "<");
+}

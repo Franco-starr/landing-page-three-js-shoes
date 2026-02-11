@@ -18,61 +18,56 @@
 </head>
 <body>
 
-  <canvas id="webgl"></canvas>
 
   <header>
     
+
+    <div class="transition-overlay"></div>
   </header>
 
   
-
   <main class="main">
+    <!-- HERO -->
+    <section class="hero">
+      <p class="hero-title hero-title--top">Nike shoes </p>
+      <p class="hero-title hero-title--bottom">MADE TO MOVE</p>
 
-  <!-- HERO -->
-  <section class="hero">
-    <p class="hero-title hero-title--top">Nike shoes </p>
-    <p class="hero-title hero-title--bottom">MADE TO MOVE</p>
-
-    <div class="hero-canvas">
+      <div class="hero-canvas">
       <!-- acá va el canvas de Three.js -->
-    </div>
-  </section>
+      <canvas id="webgl"></canvas>
+      </div>
+    </section>
+    <!-- SECTION 2 -->
+    <section class="split">
+      <p class="half"></p>
 
-  <!-- SECTION 1 -->
-  <section class="split">
-    <div class="split-empty"></div>
+      <p class="half text">
+        Ultra-lightweight materials and responsive cushioning give you energy in
+  every step. Feel faster, move longer, go further.
+      </p>
+    </section>
 
-    <p class="split-text">
-       Designed for everyday movement. Lightweight materials and a
-    responsive sole let you focus on what matters — not on your feet.
-    </p>
-  </section>
+    <!-- SECTION 3 -->
+    <section class="split">
+      <p class="half text">
+        Built for the streets and engineered for performance. Durable support,
+  breathable design, unstoppable confidence wherever you run.
+      </p>
+      <p class="half"></p>
+    </section>
 
-  <!-- SECTION 2 -->
-  <section class="split">
-    <p class="split-text">
-       Built to handle the city. Durable outsoles, reinforced structure,
-    and grip you can trust on any surface.
-    </p>
+    <!-- SECTION 4 -->
+    <section class="split">
+      <p class="half"></p>
 
-    <div class="split-empty"></div>
-  </section>
-
-  <!-- SECTION 3 -->
-  <section class="split">
-    <div class="split-empty"></div>
-
-    <p class="split-text">
-       No unnecessary details. Just clean design, proven performance,
-    and the confidence that comes with the Swoosh.
-    </p>
-  </section>
+      <p class="half text">
+         Precision fit, bold style, and next-level traction. The future of running
+  is already on your feet.
+      </p>
+    </section>
+  </main>
 
 
-
-</main>
-
-  
   <script type="module" src="./src/js/main.js"></script>
   <script src="./src/js/gsap.js"></script>
 </body>

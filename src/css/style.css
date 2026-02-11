@@ -5,6 +5,10 @@
   box-sizing: border-box;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   background: black;
   color: white;
@@ -59,29 +63,6 @@ body {
   z-index: 1;
 }
 
-/* =====================
-   SPLIT SECTIONS
-===================== */
-
-.split {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  height: 100vh;
-}
-
-.split-empty {
-  width: 50%;
-}
-
-.split-text {
-  width: 50%;
-  padding-inline: 1rem;
-  text-align: center;
-  font-size: 2.25rem;
-  font-weight: 600;
-}
-
 
 /*canvas*/
 #webgl {
@@ -95,3 +76,22 @@ body {
 }
 
 
+/* SPLIT SECTIONS */
+.split {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.half {
+  width: 50%;
+}
+
+.text {
+  text-align: center;
+  padding: 0 1rem;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 600;
+}
