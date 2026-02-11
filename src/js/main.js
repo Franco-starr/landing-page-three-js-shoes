@@ -39,7 +39,7 @@ const canvas = document.querySelector('#webgl');
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
-  //alpha: true // fondo transparente
+  alpha: true // fondo transparente
 });
 
 // ✅ sombras ACTIVADAS (este era el typo)
@@ -146,9 +146,7 @@ scene.add(directionalLight);
 
 function animate() {
   requestAnimationFrame(animate);
-
-
- controls.update();
+  controls.update();
   renderer.render(scene, camera);
 }
 
@@ -162,7 +160,6 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-
 });
 
 //gsap 

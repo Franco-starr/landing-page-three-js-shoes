@@ -10,7 +10,7 @@ html {
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: sans-serif;
   background-color: #bf0a30;
   color: #fff;
   overflow-x: hidden;
@@ -107,6 +107,8 @@ nav ul li a:hover {
 .horizontal {
   height: 100vh;
   position: relative;
+    z-index: 3;
+
 }
 
 .horizontal-wrapper {
@@ -126,7 +128,18 @@ nav ul li a:hover {
 .info {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  background-color: #e76f51;
+  padding-top: 120px;
+}
+
+p.text {
+  text-align: center;
+}
+
+.info .container {
+  text-align: center;
+  min-height: 150vh; /* Limita el tamaño de este */
 }
 
 .info.dark {
@@ -177,4 +190,21 @@ nav ul li a:hover {
 .buy-btn:hover {
   transform: scale(1.05);
   background: #e76f51;
+}
+
+/* ================= Canvas ================= */
+#webgl {
+  position: fixed;
+  inset: 0;
+  z-index: 2;   /* encima del fondo */
+  pointer-events: none;
+}
+
+.container,
+.header_main,
+.title,
+.text,
+.buy-btn {
+  position: relative;
+  z-index: 3;   /* arriba del modelo */
 }
