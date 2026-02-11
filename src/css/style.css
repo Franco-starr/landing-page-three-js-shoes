@@ -126,7 +126,7 @@ nav ul li a:hover {
 /* ================= INFO ================= */
 
 .info {
-  min-height: 100vh;
+  min-height: 150vh;
   display: flex;
   align-items: flex-start;
   background-color: #e76f51;

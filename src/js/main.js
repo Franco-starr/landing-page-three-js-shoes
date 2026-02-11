@@ -2,7 +2,6 @@ import * as THREE from 'https://esm.sh/three@0.158.0';
 import { OrbitControls } from 'https://esm.sh/three@0.158.0/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://esm.sh/three@0.158.0/examples/jsm/loaders/GLTFLoader.js';
 const loader = new GLTFLoader();
-gsap.registerPlugin(ScrollTrigger);
 
 
 /* =========================
@@ -10,10 +9,12 @@ gsap.registerPlugin(ScrollTrigger);
 ========================= */
 
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xbf0a30); // gris oscuro elegante
 
 /* =========================
    CÁMARA
 ========================= */
+
 
 const fov = 75;
 const aspectRatio = window.innerWidth / window.innerHeight;
@@ -26,6 +27,8 @@ const camera = new THREE.PerspectiveCamera(
   near,
   far
 );
+export { camera };
+
 
 // Cámara un poco más lejos para ver sombra
 camera.position.set(0, 0, 2);
@@ -39,7 +42,7 @@ const canvas = document.querySelector('#webgl');
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
-  alpha: true // fondo transparente
+  //alpha: true // fondo transparente
 });
 
 // ✅ sombras ACTIVADAS (este era el typo)
@@ -67,10 +70,7 @@ scene.add(axesHelper);
 /* =========================
    modelo zapatilla
 ============================*/
-
-let shoes;
-
-
+export let shoes = null;
 loader.load('/src/model/nike_air_zoom_pegasus_36.glb', (gltf) => {
    shoes = gltf.scene;
 
@@ -86,16 +86,19 @@ loader.load('/src/model/nike_air_zoom_pegasus_36.glb', (gltf) => {
   shoes.position.set(0, 0, 0);
   scene.add(shoes);
 
-   /* =========================
+  // 🔥 avisamos que el modelo ya existe
+  window.dispatchEvent(new Event("modelReady"));
+
+  /*=========================
      GSAP SCROLL ANIMATIONS
-  ========================= */
-  
+    ========================= */
+    
 });
 
 
-/* =========================
+/*=========================
    PISO (INVISIBLE + SOMBRA)
-========================= */
+  ========================= */
 
 const material = new THREE.MeshStandardMaterial({
   color: 0x00ff00,
@@ -125,20 +128,43 @@ scene.add(plane);
    LUCES
 ========================= */
 
-// Luz ambiente suave
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-scene.add(ambientLight);
+/* =========================
+   LUCES PRO SHOWROOM
+========================= */
 
-// Luz principal (como sol)
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
-directionalLight.position.set(2, 4, 3);
-directionalLight.castShadow = true;
+// ambiente MUY suave (solo para no tener negros puros)
+const ambient = new THREE.AmbientLight(0xffffff, 0.25);
+scene.add(ambient);
 
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.camera.near = 0.1;
-directionalLight.shadow.camera.far = 10;
 
-scene.add(directionalLight);
+// ☀️ KEY LIGHT (principal)
+const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+keyLight.position.set(3, 4, 2);
+keyLight.castShadow = true;
+
+keyLight.shadow.mapSize.width = 2048;
+keyLight.shadow.mapSize.height = 2048;
+
+keyLight.shadow.camera.near = 0.1;
+keyLight.shadow.camera.far = 20;
+
+scene.add(keyLight);
+
+
+// 💡 FILL LIGHT (suaviza sombras)
+const fillLight = new THREE.DirectionalLight(0xffffff, 0.6);
+fillLight.position.set(-3, 2, 2);
+scene.add(fillLight);
+
+
+// ✨ RIM LIGHT (borde / silueta)
+const rimLight = new THREE.DirectionalLight(0xffffff, 1);
+rimLight.position.set(0, 3, -3);
+scene.add(rimLight);
+
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 /* =========================
    ANIMACIÓN
@@ -164,102 +190,3 @@ window.addEventListener('resize', () => {
 
 //gsap 
 
-/*
-function heroIntro() {
-
-  const spin = gsap.to(shoes.rotation, {
-    y: "+=" + Math.PI * 2,
-    duration: 20,
-    repeat: -1,
-    ease: "none",
-    paused: true
-  });
-
-  const move = gsap.to(shoes.position, {
-    x: 0,        // hacia la derecha
-    y: 0,        // un poco arriba
-    z: 0,
-    duration: 1.5,
-    ease: "power2.out",
-    paused: true
-  });
-
-  const trigger = ScrollTrigger.create({
-    trigger: ".hero-title",
-    start: "top center",
-    end: "bottom end",
-
-    onEnter: () => {
-      spin.play();
-      move.play();
-    },
-
-    onEnterBack: () => {
-      spin.play();
-      move.play();
-    },
-
-    onLeave: () => {
-      spin.pause();
-      move.reverse(); // vuelve a su lugar original
-    },
-
-    onLeaveBack: () => {
-      spin.pause();
-      move.reverse();
-    },
-  });
-
-  if (trigger.isActive) {
-    spin.play();
-    move.play();
-  }
-}
-function horizontalAnimations() {
-
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: "body",
-      start: "top top",
-      end: "bottom bottom",
-      scrub: 1
-    }
-  });
-
-  // HERO
-  tl.to(shoes.position, {
-    x: -1.5,
-    duration: 1
-  })
-  .to(shoes.rotation, {
-    y: "+=1.2"
-  }, "<");
-
-  // sección 2
-  tl.to(shoes.position, {
-    x: -0.5,
-    duration: 1
-  })
-  .to(shoes.rotation, {
-    y: "+=3.3"
-  }, "<");
-
-  // sección 3
-  tl.to(shoes.position, {
-    x: 0.8,
-    duration: 1
-  })
-  .to(shoes.rotation, {
-    y: "+=1.5"
-  }, "<");
-
-  // sección 4
-  tl.to(shoes.position, {
-    x: -1,
-    duration: 1
-  })
-  .to(shoes.rotation, {
-    y: "+=1.2"
-  }, "<");
-}
-  */
