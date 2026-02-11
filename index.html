@@ -17,55 +17,111 @@
   
 </head>
 <body>
+  <!-- <canvas id="webgl"></canvas> -->
+  <!-- ZONA HORIZONTAL -->
+  <section class="horizontal">
 
+    <div class="horizontal-wrapper">
 
-  <header>
-    
+      <!-- PANEL 1 -->
+      <div class="panel">
+        <header class="container">
+          <nav>
+            <img src="./src/img/nike-logo.webp" width="8%"/>
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">Featured</a></li>
+              <li><a href="#">Prod</a></li>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Container</a></li>
+            </ul>
+          </nav>
 
-    <div class="transition-overlay"></div>
-  </header>
+          <div class="header_main">
+            <div class="header_main_content">
+              <h1 class="header_main_content_h1">Nike shoes</h1>
+              <p class="header_main_content_p">
+                Texto del primer panel.
+              </p>
+              <button class="cta">Buy Now</button>
+            </div>
 
-  
-  <main class="main">
-    <!-- HERO -->
-    <section class="hero">
-      <p class="hero-title hero-title--top">Nike shoes </p>
-      <p class="hero-title hero-title--bottom">MADE TO MOVE</p>
-
-      <div class="hero-canvas">
-      <!-- acá va el canvas de Three.js -->
-      <canvas id="webgl"></canvas>
+            <div class="social-media"></div>
+          </div>
+        </header>
       </div>
-    </section>
-    <!-- SECTION 2 -->
-    <section class="split">
-      <p class="half"></p>
 
-      <p class="half text">
-        Ultra-lightweight materials and responsive cushioning give you energy in
-  every step. Feel faster, move longer, go further.
+      <!-- PANEL 2 -->
+      <div class="panel">
+        <div class="container">
+          <div class="header_main right">
+            <div class="header_main_content">
+              <h1 class="header_main_content_h1">New Generation</h1>
+              <p class="header_main_content_p">
+                Texto del segundo panel.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </section>
+
+  <main class="main">
+
+  <!-- SECCIÓN 1 – DATA DEL PRODUCTO -->
+  <section class="info">
+    <div class="container">
+      <h2 class="title">Diseñadas para el movimiento</h2>
+      <p class="text">
+        Capellada liviana y respirable, ajuste ergonómico y materiales
+        pensados para acompañarte durante todo el día. Comodidad y estilo
+        en cada paso.
       </p>
-    </section>
+    </div>
+  </section>
 
-    <!-- SECTION 3 -->
-    <section class="split">
-      <p class="half text">
-        Built for the streets and engineered for performance. Durable support,
-  breathable design, unstoppable confidence wherever you run.
+  <!-- SECCIÓN 2 – TECNOLOGÍA / BENEFICIOS -->
+  <section class="info dark">
+    <div class="container grid-2">
+      <div>
+      <h2 class="title">Rendimiento superior</h2>
+      <p class="text">
+        Suela con amortiguación reactiva, tracción optimizada y estructura
+        reforzada para soportar el ritmo de la ciudad.
+        Más energía, menos impacto.
       </p>
-      <p class="half"></p>
-    </section>
+      </div>
 
-    <!-- SECTION 4 -->
-    <section class="split">
-      <p class="half"></p>
+      <!-- COLUMNA 2 -->
+    <div>
+      <!-- futura imagen o algo -->
+    </div>
 
-      <p class="half text">
-         Precision fit, bold style, and next-level traction. The future of running
-  is already on your feet.
-      </p>
-    </section>
-  </main>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 3 – COMPRA -->
+  <section class="buy">
+    <div class="container grid-2">
+      <div>
+
+      </div>
+      <div>
+        <h2 class="title">¿Listo para dar el salto?</h2>
+        <p class="text">
+          Llevá tu experiencia al siguiente nivel con la nueva generación
+          de Nike.
+        </p>
+        <button class="buy-btn">Comprar ahora</button>
+      </div>
+    </div>
+  </section>
+
+</main>
 
 
   <script type="module" src="./src/js/main.js"></script>

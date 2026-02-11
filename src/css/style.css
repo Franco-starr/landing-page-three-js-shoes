@@ -5,93 +5,176 @@
   box-sizing: border-box;
 }
 
-html, body {
-  overflow-x: hidden;
+html {
+  font-size: 1rem;
 }
 
 body {
-  background: black;
-  color: white;
-  font-family: system-ui, sans-serif;
-}
-
-.main {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #bf0a30;
+  color: #fff;
   overflow-x: hidden;
-  position: relative;
 }
 
-/* =====================
-   HERO
-===================== */
+/* contenedor */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-.hero {
-  position: relative;
+/* ================= NAVBAR ================= */
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 0;
+}
+
+nav img {
+  width: 80px;
+}
+
+nav ul {
+  display: flex;
+  gap: 4rem;
+  list-style: none;
+}
+
+nav ul li a {
+  text-decoration: none;
+  font-size: 1.6;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+nav ul li a:hover {
+  opacity: .6;
+}
+
+/* ================= HERO ================= */
+
+.header_main {
   display: grid;
-  place-items: center;
-  height: 100vh;
-  background-color: aquamarine;
+  align-items: center;
+  grid-template-columns: 1fr 1fr;
+  min-height: 80vh;
 }
 
-.hero-cajita {
+.header_main_content {
+  max-width: 500px;
+}
+
+.header_main_content_h1 {
+  font-size: 6rem;
+  margin-bottom: 20px;
+}
+
+.header_main_content_p {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  opacity: 0.9;
+}
+
+.cta {
+  font-size: 1.8rem;
+  padding: 15px 45px;
+  border: none;
+  border-radius: 30px;
+  background: #f4a261;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cta:hover {
+  background: #e76f51;
+}
+
+/* ================= MODIFICADOR DERECHA ================= */
+
+.header_main.right .header_main_content {
+  grid-column: 2;
+  margin-left: auto;
+}
+
+/* ================= HORIZONTAL SCROLL ================= */
+
+.horizontal {
+  height: 100vh;
   position: relative;
-  display: grid;
-  place-items: center;
-  height: 100vh;
 }
 
-
-.hero-title {
-  position: absolute;
-  text-align: center;
-  font-weight: 700;
-  margin-inline: 1rem;
+.horizontal-wrapper {
+  display: flex;
+  height: 100%;
 }
 
-.hero-title--top {
-  top: 5%;
-  font-size: 4rem;
-}
-
-.hero-title--bottom {
-  bottom: 5%;
-  font-size: 4rem;
-}
-
-.hero-canvas {
-  width: 100vw;
-  height: 100vh;
-  z-index: 1;
-}
-
-
-/*canvas*/
-#webgl {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-   z-index: 10;           /* 👈 delante del HTML */
-  pointer-events: none; /* 👈 CLAVE: no bloquea scroll */
-}
-
-
-/* SPLIT SECTIONS */
-.split {
-  position: relative;
+.panel {
+  min-width: 100vw;
   height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
 }
 
-.half {
-  width: 50%;
+/* ================= INFO ================= */
+
+.info {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.info.dark {
+  background: #111;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.title {
+  font-size: 4rem;
+  margin-bottom: 20px;
 }
 
 .text {
+  font-size: 1.8rem;
+  max-width: 700px;
+  line-height: 1.6;
+  opacity: .9;
+}
+
+/* ================= COMPRA ================= */
+
+.buy {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
   text-align: center;
-  padding: 0 1rem;
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  font-weight: 600;
+  background: #000;
+}
+
+.buy-btn {
+  margin-top: 30px;
+  font-size: 2rem;
+  padding: 18px 60px;
+  border-radius: 40px;
+  border: none;
+  background: #f4a261;
+  color: white;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.buy-btn:hover {
+  transform: scale(1.05);
+  background: #e76f51;
 }
