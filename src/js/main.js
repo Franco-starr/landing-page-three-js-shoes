@@ -189,4 +189,3 @@ window.addEventListener('resize', () => {
 });
 
 //gsap 
-
