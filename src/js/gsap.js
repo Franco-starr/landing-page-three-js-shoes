@@ -196,32 +196,56 @@ function initBuyModelAnimations() {
     .to(camera.position, { y: 0, z: 2.2 }, "<");
 
 }
-
 /* =====================================================
-   AUTO SNAP VERTICAL (SIN ROMPER HORIZONTAL)
+   AUTO SNAP RESPONSIVE (FIX REAL)
 ===================================================== */
 
 let isSnapping = false;
 
-const snapSections = [
-  document.querySelector(".horizontal"),
-  ...document.querySelectorAll(".info"),
-  document.querySelector(".buy")
-];
+function getSnapSections() {
 
-let currentSection = 0;
+  if (window.innerWidth < 768) {
+    // En mobile cada panel es sección individual
+    return [
+      ...document.querySelectorAll(".panel"),
+      ...document.querySelectorAll(".info"),
+      document.querySelector(".buy")
+    ];
+  } else {
+    // En desktop el horizontal es una sola sección
+    return [
+      document.querySelector(".horizontal"),
+      ...document.querySelectorAll(".info"),
+      document.querySelector(".buy")
+    ];
+  }
 
-function goToSection(index) {
+}
 
-  if (index < 0 || index >= snapSections.length) return;
+function getCurrentSectionIndex(sections) {
+
+  const scrollY = window.scrollY;
+  let index = 0;
+
+  sections.forEach((section, i) => {
+    if (scrollY >= section.offsetTop - window.innerHeight * 0.5) {
+      index = i;
+    }
+  });
+
+  return index;
+}
+
+function goToSection(index, sections) {
+
+  if (index < 0 || index >= sections.length) return;
 
   isSnapping = true;
-  currentSection = index;
 
   gsap.to(window, {
-    duration: 1,
+    duration: 0.8,
     scrollTo: {
-      y: snapSections[index],
+      y: sections[index],
       autoKill: false
     },
     ease: "power2.inOut",
@@ -232,21 +256,29 @@ function goToSection(index) {
 
 }
 
+let wheelTimeout;
+
 window.addEventListener("wheel", (e) => {
 
-  /* 🚫 NO SNAPEAR SI EL HORIZONTAL ESTÁ ACTIVO */
   if (horizontalST && horizontalST.isActive) return;
-
   if (isSnapping) return;
 
-  if (e.deltaY > 0) {
-    goToSection(currentSection + 1);
-  } else {
-    goToSection(currentSection - 1);
-  }
+  clearTimeout(wheelTimeout);
+
+  wheelTimeout = setTimeout(() => {
+
+    const sections = getSnapSections();
+    const currentIndex = getCurrentSectionIndex(sections);
+
+    if (e.deltaY > 0) {
+      goToSection(currentIndex + 1, sections);
+    } else {
+      goToSection(currentIndex - 1, sections);
+    }
+
+  }, 60);
 
 });
-
 /* =====================================================
    INIT
 ===================================================== */
