@@ -1,114 +1,69 @@
-/* RESET BÁSICO */
+/* ================= RESET ================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html {
-  font-size: 1rem;
-}
-
 body {
   font-family: sans-serif;
-  background-color: #bf0a30;
-  color: #fff;
+  background: #bf0a30;
+  color: white;
   overflow-x: hidden;
 }
 
-/* contenedor */
+/* ================= CONTAINER ================= */
 .container {
   width: 90%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: auto;
 }
 
-/* ================= NAVBAR ================= */
+/* ================= CANVAS ================= */
+/* más abajo que el contenido */
+#webgl {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ================= UI / NAV ================= */
+.ui {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000; /* siempre arriba */
+}
 
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 30px 0;
+  padding: 25px 0;
 }
 
 nav img {
-  width: 80px;
+  width: 70px;
 }
 
 nav ul {
   display: flex;
-  gap: 4rem;
+  gap: 2rem;
   list-style: none;
 }
 
-nav ul li a {
+nav a {
+  color: white;
   text-decoration: none;
-  font-size: 1.6;
   text-transform: uppercase;
-  color: #fff;
-  font-weight: 500;
-  transition: 0.3s;
 }
 
-nav ul li a:hover {
-  opacity: .6;
-}
-
-/* ================= HERO ================= */
-
-.header_main {
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 1fr;
-  min-height: 80vh;
-}
-
-.header_main_content {
-  max-width: 500px;
-}
-
-.header_main_content_h1 {
-  font-size: 6rem;
-  margin-bottom: 20px;
-}
-
-.header_main_content_p {
-  font-size: 1.6rem;
-  line-height: 1.6;
-  margin-bottom: 40px;
-  opacity: 0.9;
-}
-
-.cta {
-  font-size: 1.8rem;
-  padding: 15px 45px;
-  border: none;
-  border-radius: 30px;
-  background: #f4a261;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.cta:hover {
-  background: #e76f51;
-}
-
-/* ================= MODIFICADOR DERECHA ================= */
-
-.header_main.right .header_main_content {
-  grid-column: 2;
-  margin-left: auto;
-}
-
-/* ================= HORIZONTAL SCROLL ================= */
-
+/* ================= HORIZONTAL ================= */
 .horizontal {
   height: 100vh;
   position: relative;
-    z-index: 3;
-
+  z-index: 1;
 }
 
 .horizontal-wrapper {
@@ -123,96 +78,103 @@ nav ul li a:hover {
   align-items: center;
 }
 
-/* ================= INFO ================= */
-
-.info {
-  min-height: 150vh;
+/* ================= HERO ================= */
+.header_main {
   display: flex;
-  align-items: flex-start;
-  background-color: #e76f51;
-  padding-top: 120px;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
 }
 
-p.text {
-  text-align: center;
+.header_main.right {
+  justify-content: flex-end;
+  text-align: right;
 }
 
-.info .container {
+.header_main_content {
+  max-width: 520px;
+}
+
+/* 👇 ESTO ES CLAVE */
+.header_main_content_h1,
+.header_main_content_p,
+.cta {
+  position: relative;
+  z-index: 5;
+}
+
+.header_main_content_h1 {
+  font-size: clamp(2.5rem, 6vw, 6rem);
+  margin-bottom: 20px;
+}
+
+.header_main_content_p {
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.cta {
+  padding: 14px 40px;
+  border-radius: 30px;
+  border: none;
+  background: #f4a261;
+  color: white;
+}
+
+/* ================= INFO ================= */
+.info {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
   text-align: center;
-  min-height: 150vh; /* Limita el tamaño de este */
+  /*background: #e76f51;*/
+  position: relative;
+  z-index: 1;
 }
 
 .info.dark {
-  background: #111;
+  /*background: #111;*/
 }
 
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
+.title,
+.text {
+  position: relative;
+  z-index: 5;
 }
 
 .title {
-  font-size: 4rem;
+  font-size: 3rem;
   margin-bottom: 20px;
 }
 
 .text {
-  font-size: 1.8rem;
   max-width: 700px;
-  line-height: 1.6;
-  opacity: .9;
+  margin: auto;
 }
 
-/* ================= COMPRA ================= */
-
+/* ================= BUY ================= */
 .buy {
   min-height: 100vh;
   display: flex;
   align-items: center;
   text-align: center;
-  background: #000;
+  /*background: black;*/
+  position: relative;
+  z-index: 1;
 }
 
 .buy-btn {
-  margin-top: 30px;
-  font-size: 2rem;
-  padding: 18px 60px;
+  margin-top: 20px;
+  padding: 15px 50px;
   border-radius: 40px;
   border: none;
   background: #f4a261;
   color: white;
-  cursor: pointer;
-  transition: .3s;
-}
-
-.buy-btn:hover {
-  transform: scale(1.05);
-  background: #e76f51;
-}
-
-/* ================= Canvas ================= */
-#webgl {
-  position: fixed;
-  inset: 0;
-  z-index: 2;   /* encima del fondo */
-  pointer-events: none;
-}
-
-.container,
-.header_main,
-.title,
-.text,
-.buy-btn {
   position: relative;
-  z-index: 3;   /* arriba del modelo */
+  z-index: 5;
 }
 
-
-/* =========================
-   BOTON HAMBURGUESA
-========================= */
+/* ================= HAMBURGUESA ================= */
 .menu-toggle {
   display: none;
   width: 40px;
@@ -221,7 +183,7 @@ p.text {
   border: none;
   background: none;
   cursor: pointer;
-  z-index: 1000;
+  z-index: 1100;
 }
 
 .menu-toggle span {
@@ -231,14 +193,13 @@ p.text {
   height: 3px;
   background: white;
   transition: all 0.3s ease;
-  display: block;
 }
 
 .menu-toggle span:nth-child(1) { top: 0; }
 .menu-toggle span:nth-child(2) { top: 50%; transform: translateY(-50%); }
 .menu-toggle span:nth-child(3) { bottom: 0; }
 
-/* Animación a X */
+/* animación */
 .menu-toggle.active span:nth-child(1) {
   transform: rotate(45deg);
   top: 50%;
@@ -254,18 +215,21 @@ p.text {
   bottom: auto;
 }
 
-
-/* =========================
-   MOBILE
-========================= */
+/* ================= MOBILE ================= */
 @media (max-width: 768px) {
+  img {
+      z-index: 1100;
+  }
+  .ui {
+    background-color: #111;
+  }
   .menu-toggle {
     display: flex;
   }
 
   nav ul {
     position: fixed;
-    top: 60px;
+    top: 70px;
     left: 0;
     width: 100%;
     background: #111;
@@ -273,12 +237,9 @@ p.text {
     justify-content: center;
     align-items: center;
     padding: 2rem 0;
-    /*z-index: 2000; /* 👈 LA CLAVE */
-
 
     clip-path: circle(0px at 90% -10%);
     transition: clip-path 0.5s ease;
-
     pointer-events: none;
   }
 
@@ -298,17 +259,13 @@ p.text {
     transform: translateY(0);
   }
 
-  nav li:nth-child(1) { transition-delay: 0.1s; }
-  nav li:nth-child(2) { transition-delay: 0.2s; }
-  nav li:nth-child(3) { transition-delay: 0.3s; }
-  nav li:nth-child(4) { transition-delay: 0.4s; }
-  nav li:nth-child(5) { transition-delay: 0.4s; }
-
-  nav {
-    position: relative;
-    z-index: 2000;
+  .header_main,
+  .header_main.right {
+    justify-content: center;
+    text-align: center;
   }
-  nav img {
-    z-index: 2000;
+
+  .panel {
+    padding: 0 20px;
   }
 }

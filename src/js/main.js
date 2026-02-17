@@ -42,7 +42,7 @@ const canvas = document.querySelector('#webgl');
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
-  //alpha: true // fondo transparente
+  alpha: true // fondo transparente
 });
 
 // ✅ sombras ACTIVADAS (este era el typo)
@@ -92,6 +92,18 @@ loader.load('/src/model/nike_air_zoom_pegasus_36.glb', (gltf) => {
   /*=========================
      GSAP SCROLL ANIMATIONS
     ========================= */
+    function updateModelScale() {
+  const isMobile = window.innerWidth < 768;
+
+  if (isMobile) {
+    shoes.scale.set(0.9, 0.9, 0.9);
+  } else {
+    shoes.scale.set(1.2, 1.2, 1.2);
+  }
+}
+
+updateModelScale();
+window.addEventListener('resize', updateModelScale);
     
 });
 

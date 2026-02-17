@@ -4,57 +4,57 @@
   <meta charset="UTF-8" />
   <title>Producto 3D</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="./src/css/style.css" />
 
-  <!-- Three.js -->
-  
-
-  <!-- GSAP -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
-
-  
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollToPlugin.min.js"></script>
 </head>
-<body>
-  <canvas id="webgl"></canvas>
-  <!-- ZONA HORIZONTAL -->
-  <section class="horizontal">
 
+<body>
+
+  <canvas id="webgl"></canvas>
+
+  <!-- ================= NAV FIJA ================= -->
+  <header class="ui">
+    <div class="container">
+      <nav>
+        <img src="./src/img/nike-logo.webp"/>
+
+        <button class="menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Featured</a></li>
+          <li><a href="#">Prod</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ================= HORIZONTAL ================= -->
+  <section class="horizontal">
     <div class="horizontal-wrapper">
 
       <!-- PANEL 1 -->
       <div class="panel">
-        <header class="container">
-          <nav>
-            <img src="./src/img/nike-logo.webp" width="8%"/>
-            <button class="menu-toggle">
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-            <ul>
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Featured</a></li>
-              <li><a href="#">Prod</a></li>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Container</a></li>
-            </ul>
-          </nav>
-
+        <div class="container">
           <div class="header_main">
             <div class="header_main_content">
               <h1 class="header_main_content_h1">Nike shoes</h1>
               <p class="header_main_content_p">
                 Potencia tu rendimiento con una zapatilla creada para responder en cada paso.
-                Amortiguación precisa, ajuste perfecto y la energía que necesitas para superar tus límites.
               </p>
               <button class="cta">Comprar ahora</button>
             </div>
-
-            <div class="social-media"></div>
           </div>
-        </header>
+        </div>
       </div>
 
       <!-- PANEL 2 -->
@@ -64,77 +64,52 @@
             <div class="header_main_content">
               <h1 class="header_main_content_h1">Nada puede detenerte</h1>
               <p class="header_main_content_p">
-                Diseñadas para quienes van por más. 
-                Ligereza, estabilidad y un impulso que se siente desde el primer movimiento.
+                Diseñadas para quienes van por más.
               </p>
             </div>
-
           </div>
         </div>
       </div>
 
-
     </div>
   </section>
 
+  <!-- ================= MAIN ================= -->
   <main class="main">
 
-  <!-- SECCIÓN 1 – DATA DEL PRODUCTO -->
-  <section class="info">
-    <div class="container">
-      <div>
-      <h2 class="title">Diseñadas para el movimiento</h2>
-      <p class="text">
-        Capellada liviana y respirable, ajuste ergonómico y materiales
-        pensados para acompañarte durante todo el día. Comodidad y estilo
-        en cada paso.
-      </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECCIÓN 2 – TECNOLOGÍA / BENEFICIOS -->
-  <section class="info dark">
-    <div class="container grid-2">
-      <div>
-      <h2 class="title">Rendimiento superior</h2>
-      <p class="text">
-        Suela con amortiguación reactiva, tracción optimizada y estructura
-        reforzada para soportar el ritmo de la ciudad.
-        Más energía, menos impacto.
-      </p>
-      </div>
-
-      <!-- COLUMNA 2 -->
-    <div>
-      <!-- futura imagen o algo -->
-    </div>
-
-    </div>
-  </section>
-
-  <!-- SECCIÓN 3 – COMPRA -->
-  <section class="buy">
-    <div class="container grid-2">
-      <div>
-
-      </div>
-      <div>
-        <h2 class="title">¿Listo para dar el salto?</h2>
+    <section class="info">
+      <div class="container">
+        <h2 class="title">Diseñadas para el movimiento</h2>
         <p class="text">
-          Llevá tu experiencia al siguiente nivel con la nueva generación
-          de Nike.
+          Capellada liviana y respirable.
         </p>
+      </div>
+    </section>
+
+    <section class="info dark">
+      <div class="container grid-2">
+        <div>
+          <h2 class="title">Rendimiento superior</h2>
+          <p class="text">
+            Más energía, menos impacto.
+          </p>
+        </div>
+        <div></div>
+      </div>
+    </section>
+
+    <section class="buy">
+      <div class="container">
+        <h2 class="title">¿Listo para dar el salto?</h2>
         <button class="buy-btn">Comprar ahora</button>
       </div>
-    </div>
-  </section>
+    </section>
 
-</main>
-
+  </main>
 
   <script type="module" src="./src/js/main.js"></script>
   <script type="module" src="./src/js/gsap.js"></script>
   <script type="module" src="./src/js/ui.js"></script>
+
 </body>
 </html>
