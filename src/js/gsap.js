@@ -209,14 +209,14 @@ function initInfoModelAnimations() {
 
       if (i === 0) {
         tl.to(shoes.position, { x: 0, y: 0 })
-          .to(shoes.rotation, { y: 1 }, "<")
+          .to(shoes.rotation, { y: 2.6, x: 0.5 }, "<")
           .to(camera.position, { z: 2 }, "<");
       }
 
       if (i === 1) {
-        tl.to(shoes.position, { x: 1, y: -0.6 })
-          .to(shoes.rotation, { y: 0 }, "<")
-          .to(camera.position, { y: 2.5, z: 0.3 }, "<");
+        tl.to(shoes.position, { x: 0, y: -0.6, z: 0 })
+          .to(shoes.rotation, { y: -1.4 }, "<")
+          .to(camera.position, { y: 2.5, z: 2 }, "<");
       }
 
     });
@@ -280,8 +280,8 @@ function initBuyModelAnimations() {
       }
     });
 
-    tl.to(shoes.position, { x: -1.5, y: -0.3 })
-      .to(shoes.rotation, { y: 2.8 }, "<")
+    tl.to(shoes.position, { x: 1.4, y: -0.3, z: 0 })
+      .to(shoes.rotation, { y: -2.2, x: 0, z: 0 }, "<")
       .to(camera.position, { y: 0, z: 2.2 }, "<");
 
   });
