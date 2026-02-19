@@ -35,6 +35,7 @@ mm.add("(min-width: 768px)", () => {
 
 });
 
+
 /* =====================================================
    TEXTOS
 ===================================================== */
@@ -137,6 +138,47 @@ function initHorizontalModelAnimations() {
 
   });
 
+   /* MOBILE */
+  mm.add("(max-width: 767px)", () => {
+
+    panels.forEach((panel, i) => {
+
+      const triggerSettings = {
+        trigger: panel,
+        start: "top center",
+        end: "bottom center",
+        scrub: 1
+      };
+
+      if (i === 0) {
+        gsap.to(shoes.position, {
+          x: 0,
+          z: -0.3,
+          y: -0.5,
+          scrollTrigger: triggerSettings
+        });
+
+        gsap.to(shoes.rotation, {
+          y: 1.1,
+          scrollTrigger: triggerSettings
+        });
+      }
+
+      if (i === 1) {
+        gsap.to(shoes.position, {
+          x: 0,
+          scrollTrigger: triggerSettings
+        });
+
+        gsap.to(shoes.rotation, {
+          y: -1.5,
+          scrollTrigger: triggerSettings
+        });
+      }
+
+    });
+     });
+
 }
 
 /* =====================================================
@@ -145,32 +187,75 @@ function initHorizontalModelAnimations() {
 
 function initInfoModelAnimations() {
 
+ const mm = gsap.matchMedia();
   const sections = gsap.utils.toArray(".info");
 
-  sections.forEach((section, i) => {
+  /* =========================
+     DESKTOP
+  ========================= */
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top 75%",
-        end: "bottom 25%",
-        scrub: 1
+  mm.add("(min-width: 768px)", () => {
+
+    sections.forEach((section, i) => {
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 75%",
+          end: "bottom 25%",
+          scrub: 1
+        }
+      });
+
+      if (i === 0) {
+        tl.to(shoes.position, { x: 0, y: 0 })
+          .to(shoes.rotation, { y: 1 }, "<")
+          .to(camera.position, { z: 2 }, "<");
       }
+
+      if (i === 1) {
+        tl.to(shoes.position, { x: 1, y: -0.6 })
+          .to(shoes.rotation, { y: 0 }, "<")
+          .to(camera.position, { y: 2.5, z: 0.3 }, "<");
+      }
+
     });
 
-    if (i === 0) {
-      tl.to(shoes.position, { x: 0, y: 0 })
-        .to(shoes.rotation, { y: 0.5 }, "<")
-        .to(camera.position, { z: 2 }, "<");
-    }
+  });
 
-    if (i === 1) {
-      tl.to(shoes.position, { x: 1, y: -0.6 })
-        .to(shoes.rotation, { y: 0 }, "<")
-        .to(camera.position, { y: 2.5, z: 0.3 }, "<");
-    }
+    /* =========================
+     MOBILE
+  ========================= */
+
+  mm.add("(max-width: 767px)", () => {
+
+    sections.forEach((section, i) => {
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          end: "bottom 20%",
+          scrub: 1
+        }
+      });
+
+      if (i === 0) {
+        tl.to(shoes.position, { x: 0, y: -0.8 })
+          .to(shoes.rotation, { y: -1, x: 1.4 }, "<")
+          .to(camera.position, { z: 2.5 }, "<");
+      }
+
+      if (i === 1) {
+        tl.to(shoes.position, { x: 0, y: -1.4 })
+          .to(shoes.rotation, { y: 0, x: 0 }, "<")
+          .to(camera.position, { y: 1.5, z: 1.5 }, "<");
+      }
+
+    });
 
   });
+
 
 }
 
@@ -180,20 +265,44 @@ function initInfoModelAnimations() {
 
 function initBuyModelAnimations() {
 
+   const mm = gsap.matchMedia();
   const buySection = document.querySelector(".buy");
 
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: buySection,
-      start: "top 80%",
-      end: "bottom 20%",
-      scrub: 1
-    }
+  /* DESKTOP */
+  mm.add("(min-width: 768px)", () => {
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: buySection,
+        start: "top 80%",
+        end: "bottom 20%",
+        scrub: 1
+      }
+    });
+
+    tl.to(shoes.position, { x: -1.5, y: -0.3 })
+      .to(shoes.rotation, { y: 2.8 }, "<")
+      .to(camera.position, { y: 0, z: 2.2 }, "<");
+
   });
 
-  tl.to(shoes.position, { x: -1.5, y: -0.3 })
-    .to(shoes.rotation, { y: 2.8 }, "<")
-    .to(camera.position, { y: 0, z: 2.2 }, "<");
+  /* MOBILE */
+  mm.add("(max-width: 767px)", () => {
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: buySection,
+        start: "top 85%",
+        end: "bottom 15%",
+        scrub: 1
+      }
+    });
+
+    tl.to(shoes.position, { x: 0, y: -1, z: 0 })
+      .to(shoes.rotation, { y: 1.5, x: 0, z: -1 }, "<")
+      .to(camera.position, { y: 0, z: 2.8 }, "<");
+
+  });
 
 }
 /* =====================================================

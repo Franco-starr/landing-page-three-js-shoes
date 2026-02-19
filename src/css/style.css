@@ -302,5 +302,10 @@ nav a {
     height: 100vh;
   }
 
+  .header_main {
+    display: flow;
+    padding-top: 8.5rem;
+  }
+
 }
 
