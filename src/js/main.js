@@ -9,7 +9,7 @@ const loader = new GLTFLoader();
 ========================= */
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xbf0a30); // gris oscuro elegante
+scene.background = new THREE.Color(0x1C1C1C); // gris oscuro elegante
 
 /* =========================
    CÁMARA

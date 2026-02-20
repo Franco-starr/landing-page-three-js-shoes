@@ -7,7 +7,7 @@
 
 body {
   font-family: sans-serif;
-  background: #bf0a30;
+  background: #0F0F0F;
   color: white;
   overflow-x: hidden;
 }
@@ -41,6 +41,8 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 25px 0;
+   font-family: "Staatliches", sans-serif;
+   font-size: 1.5rem;
 }
 
 nav img {
@@ -51,6 +53,7 @@ nav ul {
   display: flex;
   gap: 2rem;
   list-style: none;
+  
 }
 
 nav a {
@@ -106,19 +109,29 @@ nav a {
 .header_main_content_h1 {
   font-size: clamp(2.5rem, 6vw, 6rem);
   margin-bottom: 20px;
+  font-family: "Oswald", sans-serif;
 }
 
 .header_main_content_p {
   line-height: 1.6;
   margin-bottom: 30px;
+  font-family: "Oswald", sans-serif;
+  font-size: 1.3rem;
 }
 
 .cta {
   padding: 14px 40px;
   border-radius: 30px;
   border: none;
-  background: #f4a261;
+  background: #4e4c4c;
   color: white;
+  cursor: pointer;
+  font-size: 1.6rem;
+  font-family: "Oswald", sans-serif;
+}
+
+.cta:hover {
+   background: #58595a;
 }
 
 /* ================= INFO ================= */
@@ -131,6 +144,7 @@ nav a {
   /*background: #e76f51;*/
   position: relative;
   z-index: 1;
+  
 }
 
 .info.dark {
@@ -146,11 +160,15 @@ nav a {
 .title {
   font-size: 3rem;
   margin-bottom: 20px;
+  font-family: "Oswald", sans-serif;
+  font-size: 4rem;
 }
 
 .text {
   max-width: 700px;
   margin: auto;
+  font-family: "Staatliches", sans-serif;
+  font-size: 1.3rem;
 }
 
 /* ================= BUY ================= */
@@ -163,6 +181,7 @@ nav a {
   /*background: black;*/
   position: relative;
   z-index: 1;
+  font-family: "Oswald", sans-serif;
 }
 
 .buy-btn {
@@ -170,10 +189,17 @@ nav a {
   padding: 15px 50px;
   border-radius: 40px;
   border: none;
-  background: #f4a261;
+  background: #4e4c4c;
+  cursor: pointer;
   color: white;
   position: relative;
   z-index: 5;
+  font-family: "Oswald", sans-serif;
+  font-size: 1.5rem;
+}
+
+.buy-btn:hover {
+  background: #58595a;
 }
 
 /* ================= HAMBURGUESA ================= */
