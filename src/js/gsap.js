@@ -298,7 +298,7 @@ function initBuyModelAnimations() {
       }
     });
 
-    tl.to(shoes.position, { x: 0, y: -1, z: 0 })
+    tl.to(shoes.position, { x: 0, y: -1.01, z: 0 })
       .to(shoes.rotation, { y: 1.5, x: 0, z: -1 }, "<")
       .to(camera.position, { y: 0, z: 2.8 }, "<");
 

@@ -64,9 +64,10 @@ controls.enableDamping = false;
 ========================= */
 
 // ❗ Cuando ya esté listo, eliminá esto
+/*
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
-
+*/
 /* =========================
    modelo zapatilla
 ============================*/
