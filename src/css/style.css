@@ -299,6 +299,7 @@ nav a {
   .panel {
     padding: 0 20px;
   }
+
 }
 
 @media (max-width: 768px) {
@@ -337,6 +338,14 @@ nav a {
   .buy {
     justify-content: center;
     text-align: center;
+  }
+
+  .title, .header_main {
+    font-size: 2rem;
+  }
+
+  .header_main_content_p, .text {
+    font-size: 1rem;
   }
 
 }
