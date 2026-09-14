@@ -43,17 +43,19 @@ npm run preview    # sirve el build en http://localhost:4173
 ```
 ├── index.html            # entrada principal
 ├── vite.config.js
+├── public/
+│   ├── img/              # recursos (logo)
+│   └── model/            # zapatilla 3D (.glb)
 └── src/
     ├── css/style.css     # estilos
-    ├── img/              # recursos (logo)
-    ├── js/
-    │   ├── main.js       # escena three.js, modelo, luces, render
-    │   ├── gsap.js       # animaciones de scroll
-    │   └── ui.js         # menú móvil
-    └── model/            # zapatilla 3D (.glb)
+    └── js/
+        ├── main.js       # escena three.js, modelo, luces, render
+        ├── gsap.js       # animaciones de scroll
+        └── ui.js         # menú móvil
 ```
 
 ## Assets del modelo
 
-El modelo 3D `nike_air_zoom_pegasus_36.glb` se importa desde `src/model/`
-y se empaqueta automáticamente en el build vía `?url`.
+El modelo 3D `nike_air_zoom_pegasus_36.glb` vive en `public/model/` y se sirve
+directamente en `/model/nike_air_zoom_pegasus_36.glb`. Al estar en `public/`,
+Vite lo copia a `dist/` tal cual, sin hashear.

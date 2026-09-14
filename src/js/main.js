@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import nikeModelUrl from '../model/nike_air_zoom_pegasus_36.glb?url';
 const loader = new GLTFLoader();
 
 
@@ -73,7 +72,7 @@ scene.add(axesHelper);
    modelo zapatilla
 ============================*/
 export let shoes = null;
-loader.load(nikeModelUrl, (gltf) => {
+loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
    shoes = gltf.scene;
 
   shoes.traverse((obj) => {
