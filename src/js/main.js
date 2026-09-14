@@ -1,6 +1,7 @@
-import * as THREE from 'https://esm.sh/three@0.158.0';
-import { OrbitControls } from 'https://esm.sh/three@0.158.0/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'https://esm.sh/three@0.158.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import nikeModelUrl from '../model/nike_air_zoom_pegasus_36.glb?url';
 const loader = new GLTFLoader();
 
 
@@ -72,7 +73,7 @@ scene.add(axesHelper);
    modelo zapatilla
 ============================*/
 export let shoes = null;
-loader.load('/src/model/nike_air_zoom_pegasus_36.glb', (gltf) => {
+loader.load(nikeModelUrl, (gltf) => {
    shoes = gltf.scene;
 
   shoes.traverse((obj) => {
