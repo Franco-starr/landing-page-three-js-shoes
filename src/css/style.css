@@ -26,7 +26,6 @@
 }
 
 html {
-  scroll-snap-type: y proximity;
   scroll-padding-top: 0px;
 }
 
@@ -98,7 +97,6 @@ nav a:hover {
   align-items: center;
   position: relative;
   z-index: 1;
-  scroll-snap-align: center;
 }
 
 .hero-content {
@@ -223,7 +221,6 @@ nav a:hover {
   display: flex;
   align-items: center;
   padding: 110px 0;
-  scroll-snap-align: center;
 }
 
 .section-title {
@@ -239,10 +236,45 @@ nav a:hover {
   margin-bottom: 48px;
 }
 
-/* ================= CARACTERÍSTICAS ================= */
-.features {
-  background: rgba(15, 15, 15, 0.72);
-  backdrop-filter: blur(2px);
+/* ================= CARACTERÍSTICAS / RESEÑAS (escenario sticky) ================= */
+.features,
+.reviews {
+  display: block;
+  padding: 0;
+  min-height: 250vh;
+  min-height: 250svh;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.features .container,
+.reviews .container {
+  position: relative;
+  z-index: 2;
+  padding: 80px 0;
+}
+
+.curtain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: auto;
+  height: 160vh;
+  height: 160svh;
+  z-index: 1;
+  background: linear-gradient(to top, #000 85%, rgba(0, 0, 0, 0.92) 92%, transparent 100%);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  pointer-events: none;
 }
 
 .cards {
@@ -353,10 +385,6 @@ nav a:hover {
 }
 
 /* ================= RESEÑAS ================= */
-.reviews {
-  background: #000;
-}
-
 .reviews-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -407,7 +435,6 @@ nav a:hover {
   justify-content: center;
   padding: 140px 0;
   text-align: center;
-  scroll-snap-align: center;
 }
 
 .cta-final h2 {
@@ -470,10 +497,6 @@ nav a:hover {
 }
 
 @media (max-width: 768px) {
-  html {
-    scroll-snap-type: y proximity;
-  }
-
   html {
     overflow-x: hidden;
   }

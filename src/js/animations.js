@@ -35,17 +35,41 @@ if (!reduceMotion) {
   );
 
   /* =========================
-     FEATURES
+     SECTION FADE - telón negro + texto (scrub)
   ========================= */
 
-  gsap.fromTo('.cards .card', { y: 60, autoAlpha: 0 }, {
-    y: 0,
-    autoAlpha: 1,
-    duration: 0.7,
-    ease: 'power3.out',
-    stagger: 0.1,
-    scrollTrigger: { trigger: '.cards', start: 'top 80%' }
-  });
+  const sectionFade = (selector, items) => {
+    const section = document.querySelector(selector);
+    if (!section) return;
+
+    const curtain = section.querySelector('.curtain');
+    const title = `${selector} .section-title`;
+    const sub = `${selector} .section-sub`;
+
+    gsap.set(curtain, { scaleY: 0 });
+    gsap.set(`${title}, ${sub}, ${items}`, { autoAlpha: 0, y: 40 });
+
+    /* Entrada: el negro sube primero y dura, luego aparece el texto */
+    gsap.timeline({
+      scrollTrigger: { trigger: selector, start: 'top bottom', end: 'top -60%', scrub: 1 }
+    })
+      .to(curtain, { scaleY: 1, duration: 0.7, ease: 'none' }, 0)
+      .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, 0.85)
+      .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 0.9)
+      .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 0.96);
+
+    /* Salida: primero desaparece el texto, luego el negro baja y queda */
+    gsap.timeline({
+      scrollTrigger: { trigger: selector, start: 'bottom bottom', end: 'bottom top', scrub: 1 }
+    })
+      .to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, 0)
+      .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 0.18)
+      .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 0.26)
+      .to(curtain, { scaleY: 0, duration: 0.6, ease: 'none' }, 0.5);
+  };
+
+  sectionFade('.features', '.cards .card');
+  sectionFade('.reviews', '.review-card');
 
   /* =========================
      TALLES
@@ -58,19 +82,6 @@ if (!reduceMotion) {
     ease: 'power3.out',
     stagger: 0.06,
     scrollTrigger: { trigger: '.sizes', start: 'top 80%' }
-  });
-
-  /* =========================
-     RESEÑAS
-  ========================= */
-
-  gsap.fromTo('.review-card', { y: 60, autoAlpha: 0 }, {
-    y: 0,
-    autoAlpha: 1,
-    duration: 0.7,
-    ease: 'power3.out',
-    stagger: 0.12,
-    scrollTrigger: { trigger: '.reviews-grid', start: 'top 80%' }
   });
 
   /* =========================
@@ -93,6 +104,9 @@ if (!reduceMotion) {
     duration: 0.9,
     ease: 'sine.inOut'
   });
+} else {
+  /* Sin movimiento: el telón queda completo para no romper el fondo */
+  gsap.set('.features .curtain, .reviews .curtain', { scaleY: 1 });
 }
 
 ScrollTrigger.refresh();

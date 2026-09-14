@@ -62,6 +62,21 @@ plane.receiveShadow = true;
 scene.add(plane);
 
 /* =========================
+   HELPERS (DEBUG)
+   ========================= */
+
+const DEBUG = true;
+
+if (DEBUG) {
+  const grid = new THREE.GridHelper(12, 12, 0x3a3a3a, 0x222222);
+  grid.position.y = -1.3;
+  scene.add(grid);
+
+  const axes = new THREE.AxesHelper(3);
+  scene.add(axes);
+}
+
+/* =========================
    LUCES SHOWROOM
 ========================= */
 
@@ -112,14 +127,14 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
     desktop: [
       { x: 1.2, y: 0, z: 0, ry: 1, s: 1.2 },
       { x: 0.7, y: 0.4, z: -0.3, ry: 1.7, s: 1.05 },
-      { x: -1.1, y: 0.1, z: 0, ry: 4.3, s: 1 },
+      { x: -1.1, y: 0.1, z: 0, ry: 1.5, s: 1.05 },
       { x: 0.9, y: 0.2, z: -0.5, ry: 2.6, s: 0.85 },
       { x: 0, y: 0.05, z: 0.3, ry: 1.1, s: 1.35 }
     ],
     mobile: [
       { x: 0, y: 0.3, z: 0, ry: 0.6, s: 0.9 },
       { x: 0, y: 0.6, z: -0.4, ry: 1.3, s: 0.75 },
-      { x: 0, y: 0.05, z: 0.3, ry: 4.3, s: 0.95 },
+      { x: 0, y: 0.05, z: 0.3, ry: 1.5, s: 0.95 },
       { x: 0, y: 0.3, z: -0.5, ry: 2.7, s: 0.7 },
       { x: 0, y: 0.1, z: 0.3, ry: 1, s: 1.05 }
     ]
@@ -130,9 +145,12 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
     gsap.set(shoes.rotation, { y: poseSet[0].ry });
     gsap.set(shoes.scale, { x: poseSet[0].s, y: poseSet[0].s, z: poseSet[0].s });
 
-    /* Progreso relativo en el que cada sección cubre la pantalla:
-       5 secciones de 100svh = 4 viewports de scroll → cada una ocupa un cuarto. */
-    const stops = [0, 0.25, 0.5, 0.75, 1];
+    /* Poses en [progreso en que cada sección cubre la pantalla]:
+       hero 100svh, features 250svh (sticky), talles 100svh,
+       reviews 250svh (sticky), cta 100svh = 800svh total → 700svh de scroll.
+       features: 100/700 = 0.1429, talles: 350/700 = 0.5,
+       reviews: 450/700 = 0.6429, cta: 1 */
+    const stops = [0, 0.1429, 0.5, 0.6429, 1];
 
     const tl = gsap.timeline({
       scrollTrigger: {
