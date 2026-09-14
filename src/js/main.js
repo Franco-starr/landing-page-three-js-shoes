@@ -1,36 +1,29 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-const loader = new GLTFLoader();
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
+
+const loader = new GLTFLoader();
 
 /* =========================
    ESCENA
 ========================= */
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1C1C1C); // gris oscuro elegante
+scene.background = new THREE.Color(0x1C1C1C);
 
 /* =========================
    CÁMARA
 ========================= */
-
 
 const fov = 75;
 const aspectRatio = window.innerWidth / window.innerHeight;
 const near = 0.1;
 const far = 1000;
 
-const camera = new THREE.PerspectiveCamera(
-  fov,
-  aspectRatio,
-  near,
-  far
-);
-export { camera };
-
-
-// Cámara un poco más lejos para ver sombra
+const camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
 camera.position.set(0, 0, 2);
 
 /* =========================
@@ -42,10 +35,9 @@ const canvas = document.querySelector('#webgl');
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
-  alpha: true // fondo transparente
+  alpha: true
 });
 
-// ✅ sombras ACTIVADAS (este era el typo)
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -53,124 +45,42 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /* =========================
-   CONTROLS
+   PISO (SOMBRA)
 ========================= */
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = false;
-
-/* =========================
-   HELPERS (solo para debug)
-========================= */
-
-// ❗ Cuando ya esté listo, eliminá esto
-/*
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
-*/
-/* =========================
-   modelo zapatilla
-============================*/
-export let shoes = null;
-loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
-   shoes = gltf.scene;
-
-  shoes.traverse((obj) => {
-    if (obj.isMesh) {
-      obj.castShadow = true;    // proyecta sombra
-      obj.receiveShadow = true; // recibe sombra (opcional)
-    }
-  });
-  shoes.rotation.y = 1
-  // tamaño correcto
-  shoes.scale.set(1.2, 1.2, 1.2);
-  shoes.position.set(0, 0, 0);
-  scene.add(shoes);
-
-  // 🔥 avisamos que el modelo ya existe
-  window.dispatchEvent(new Event("modelReady"));
-
-  /*=========================
-     GSAP SCROLL ANIMATIONS
-    ========================= */
-    function updateModelScale() {
-  const isMobile = window.innerWidth < 768;
-
-  if (isMobile) {
-    shoes.scale.set(0.9, 0.9, 0.9);
-  } else {
-    shoes.scale.set(1.2, 1.2, 1.2);
-  }
-}
-
-updateModelScale();
-window.addEventListener('resize', updateModelScale);
-    
-});
-
-
-/*=========================
-   PISO (INVISIBLE + SOMBRA)
-  ========================= */
-
-const material = new THREE.MeshStandardMaterial({
-  color: 0x00ff00,
-  roughness: 0.4,
-  metalness: 0.2
-});
-
-// ✅ ESTE ES EL MATERIAL CORRECTO
-const shadowMaterial = new THREE.ShadowMaterial({
-  opacity: 0.3 // intensidad de la sombra
-});
+const shadowMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
 
 const plane = new THREE.Mesh(
   new THREE.PlaneGeometry(12, 12),
-  shadowMaterial,
+  shadowMaterial
 );
 
 plane.rotation.x = -Math.PI / 2;
-plane.position.y = -1.3; 
-
-// ✅ typo corregido
+plane.position.y = -1.3;
 plane.receiveShadow = true;
 
 scene.add(plane);
 
 /* =========================
-   LUCES
+   LUCES SHOWROOM
 ========================= */
 
-/* =========================
-   LUCES PRO SHOWROOM
-========================= */
-
-// ambiente MUY suave (solo para no tener negros puros)
 const ambient = new THREE.AmbientLight(0xffffff, 0.25);
 scene.add(ambient);
 
-
-// ☀️ KEY LIGHT (principal)
 const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
 keyLight.position.set(3, 4, 2);
 keyLight.castShadow = true;
-
 keyLight.shadow.mapSize.width = 2048;
 keyLight.shadow.mapSize.height = 2048;
-
 keyLight.shadow.camera.near = 0.1;
 keyLight.shadow.camera.far = 20;
-
 scene.add(keyLight);
 
-
-// 💡 FILL LIGHT (suaviza sombras)
 const fillLight = new THREE.DirectionalLight(0xffffff, 0.6);
 fillLight.position.set(-3, 2, 2);
 scene.add(fillLight);
 
-
-// ✨ RIM LIGHT (borde / silueta)
 const rimLight = new THREE.DirectionalLight(0xffffff, 1);
 rimLight.position.set(0, 3, -3);
 scene.add(rimLight);
@@ -180,12 +90,94 @@ renderer.toneMappingExposure = 1;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 /* =========================
-   ANIMACIÓN
+   MODELO ZAPATILLA + ANIMACIÓN
+========================= */
+
+loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
+  const shoes = gltf.scene;
+
+  shoes.traverse((obj) => {
+    if (obj.isMesh) {
+      obj.castShadow = true;
+      obj.receiveShadow = true;
+    }
+  });
+
+  scene.add(shoes);
+
+  /* Poses clave por sección: [x, y, z, rotaciónY, escala].
+     Las 5 secciones dividen el scroll: cada posición se alcanza
+     cuando su sección ocupa la pantalla. */
+  const poses = {
+    desktop: [
+      { x: 1.2, y: 0, z: 0, ry: 1, s: 1.2 },
+      { x: 0.7, y: 0.4, z: -0.3, ry: 1.7, s: 1.05 },
+      { x: -1.1, y: 0.1, z: 0, ry: 4.3, s: 1 },
+      { x: 0.9, y: 0.2, z: -0.5, ry: 2.6, s: 0.85 },
+      { x: 0, y: 0.05, z: 0.3, ry: 1.1, s: 1.35 }
+    ],
+    mobile: [
+      { x: 0, y: 0.3, z: 0, ry: 0.6, s: 0.9 },
+      { x: 0, y: 0.6, z: -0.4, ry: 1.3, s: 0.75 },
+      { x: 0, y: 0.05, z: 0.3, ry: 4.3, s: 0.95 },
+      { x: 0, y: 0.3, z: -0.5, ry: 2.7, s: 0.7 },
+      { x: 0, y: 0.1, z: 0.3, ry: 1, s: 1.05 }
+    ]
+  };
+
+  const setupScrub = (poseSet) => {
+    gsap.set(shoes.position, { x: poseSet[0].x, y: poseSet[0].y, z: poseSet[0].z });
+    gsap.set(shoes.rotation, { y: poseSet[0].ry });
+    gsap.set(shoes.scale, { x: poseSet[0].s, y: poseSet[0].s, z: poseSet[0].s });
+
+    /* Progreso relativo en el que cada sección cubre la pantalla:
+       5 secciones de 100svh = 4 viewports de scroll → cada una ocupa un cuarto. */
+    const stops = [0, 0.25, 0.5, 0.75, 1];
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: document.body,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1
+      }
+    });
+
+    for (let i = 0; i < poseSet.length - 1; i++) {
+      const to = poseSet[i + 1];
+      const dur = stops[i + 1] - stops[i];
+
+      tl.to(shoes.position, { x: to.x, y: to.y, z: to.z, duration: dur, ease: 'none' }, stops[i])
+        .to(shoes.rotation, { y: to.ry, duration: dur, ease: 'none' }, stops[i])
+        .to(shoes.scale, { x: to.s, y: to.s, z: to.s, duration: dur, ease: 'none' }, stops[i]);
+    }
+  };
+
+  const mm = gsap.matchMedia();
+
+  mm.add('(min-width: 768px)', () => {
+    setupScrub(poses.desktop);
+    return () => {};
+  });
+
+  mm.add('(max-width: 767.98px)', () => {
+    setupScrub(poses.mobile);
+    return () => {};
+  });
+
+  /* Entrada al cargar */
+  gsap.from(shoes.position, { x: '+=1.6', y: '+=0.7', duration: 1.4, ease: 'power3.out', delay: 0.1 });
+  gsap.from(shoes.rotation, { y: '+=1.2', duration: 1.4, ease: 'power3.out', delay: 0.1 });
+
+  ScrollTrigger.refresh();
+});
+
+/* =========================
+   RENDER LOOP
 ========================= */
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
   renderer.render(scene, camera);
 }
 
@@ -200,5 +192,3 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
-//gsap 

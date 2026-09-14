@@ -2,15 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Producto 3D</title>
+  <title>Nike Air Zoom Pegasus 36</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Comprá la Nike Air Zoom Pegasus 36. Tecnología Air Zoom y espuma React para correr más rápido y más lejos." />
   <link rel="stylesheet" href="./src/css/style.css" />
-
-  
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,101 +20,201 @@
   <header class="ui">
     <div class="container">
       <nav>
-        <img src="./img/nike-logo.webp"/>
+        <a href="#producto" class="brand">
+          <img src="./img/nike-logo.webp" alt="Nike" />
+        </a>
 
-        <button class="menu-toggle">
+        <button class="menu-toggle" aria-label="Abrir menú">
           <span></span>
           <span></span>
           <span></span>
         </button>
 
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Featured</a></li>
-          <li><a href="#">Prod</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
+          <li><a href="#producto">Producto</a></li>
+          <li><a href="#caracteristicas">Tecnología</a></li>
+          <li><a href="#talles">Talles</a></li>
+          <li><a href="#resenas">Reseñas</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- ================= HORIZONTAL ================= -->
-  <section class="horizontal">
-    <div class="horizontal-wrapper">
+  <main>
 
-      <!-- PANEL 1 -->
-      <div class="panel">
-        <div class="container">
-          <div class="header_main">
-            <div class="header_main_content">
-              <h1 class="header_main_content_h1">Nike shoes</h1>
-              <p class="header_main_content_p">
-                Potencia tu rendimiento con una zapatilla creada para responder en cada paso.
-                Amortiguacion precisa, ajuste perfecto y la energia que necesitas para superar tus limites.
-              </p>
-              <button class="cta">Comprar ahora</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PANEL 2 -->
-      <div class="panel">
-        <div class="container">
-          <div class="header_main right">
-            <div class="header_main_content">
-              <h1 class="header_main_content_h1">Nada puede detenerte</h1>
-              <p class="header_main_content_p">
-                Diseñadas para quienes van por mas.
-                Ligereza, estabilidad y un impulso que se siente desde el primer movimiento.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ================= MAIN ================= -->
-  <main class="main">
-
-    <section class="info">
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="producto">
       <div class="container">
-        <h2 class="title">Diseñadas para el movimiento</h2>
-        <p class="text">
-          Capellada liviana y respirable, ajuste ergonomico y materiales pensados para acompañarte durante todo el dia.
-          Comodidad y estilo en cada paso.
-        </p>
-      </div>
-    </section>
-
-    <section class="info dark">
-      <div class="container grid-2">
-        <div>
-          <h2 class="title">Rendimiento superior</h2>
-          <p class="text">
-            Suela con amortiguación reactiva, traccion optimizada y estrtuctura reforzada para el soportar el ritmo de la ciudad.
-            Mas energia, menos impacto.
+        <div class="hero-content">
+          <p class="eyebrow">Nike Running</p>
+          <h1 class="hero-title">Air Zoom<br />Pegasus 36</h1>
+          <p class="hero-subtitle">
+            La zapatilla de running más confiable del mundo, rediseñada para
+            correr más rápido y más lejos sin sacrificar comodidad.
           </p>
+
+          <div class="hero-price">
+            <strong class="price">$119.99</strong>
+            <span class="badge">Envío gratis</span>
+          </div>
+
+          <div class="rating" aria-label="4.8 de 5 estrellas">
+            <span class="stars">★★★★★</span>
+            <span>4.8 · 1,240 reseñas</span>
+          </div>
+
+          <div class="hero-actions">
+            <a href="#talles" class="btn btn-primary">Agregar al carrito</a>
+            <a href="#caracteristicas" class="btn btn-ghost">Ver características</a>
+          </div>
         </div>
-        <div></div>
       </div>
     </section>
 
-    <section class="buy">
+    <!-- ================= CARACTERÍSTICAS ================= -->
+    <section class="section features" id="caracteristicas">
       <div class="container">
-        <h2 class="title">¿Listo para dar el salto?</h2>
-        <button class="buy-btn">Comprar ahora</button>
+        <h2 class="section-title">Tecnología que impulsa cada paso</h2>
+        <p class="section-sub">Los mismos ingredientes de rendimiento que usan los atletas de élite.</p>
+
+        <div class="cards">
+          <article class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </div>
+            <h3>Espuma React</h3>
+            <p>Mediasuela con respuesta suave y energética que se siente igual de bien desde el primer kilómetro.</p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <h3>Air Zoom</h3>
+            <p>Unidad de aire Zoom en el antepié para un retorno de energía explosivo en cada zancada.</p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12 12 4l-8 8h4v8h8v-8h4z"/></svg>
+            </div>
+            <h3>Flywire</h3>
+            <p>Fibras de ajuste integradas en la malla que brindan soporte dinámico donde más lo necesitás.</p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>Tracción Waffle</h3>
+            <p>Goma con patrón Waffle en la suela para agarre confiable en asfalto, pista y clima variable.</p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v0"/><path d="M12 15v-3"/></svg>
+            </div>
+            <h3>Solo 272 g</h3>
+            <p>Ligera para sentirte rápido, sin renunciar a la amortiguación para recorridos largos.</p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+            </div>
+            <h3>Drop 10 mm</h3>
+            <p>Caída bajo el pie de 10 mm para una transición fluida y natural del talón a la punta.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TALLES / COLOR ================= -->
+    <section class="section talles" id="talles">
+      <div class="container">
+        <div class="talles-grid">
+          <div class="talles-info">
+            <h2 class="section-title">Elegí tu talle</h2>
+            <p class="section-sub">
+              Talle estándar US. Si dudás entre dos, elegí el más grande.
+            </p>
+
+            <fieldset class="sizes">
+              <legend>Guía de talle</legend>
+              <button type="button">5.5</button>
+              <button type="button">6</button>
+              <button type="button">6.5</button>
+              <button type="button">7</button>
+              <button type="button">7.5</button>
+              <button type="button">8</button>
+              <button type="button">8.5</button>
+              <button type="button">9</button>
+              <button type="button">9.5</button>
+              <button type="button">10</button>
+              <button type="button">10.5</button>
+              <button type="button">11</button>
+            </fieldset>
+
+            <div class="talles-actions">
+              <strong class="price">$119.99</strong>
+              <button type="button" class="btn btn-primary">Agregar al carrito</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= RESEÑAS ================= -->
+    <section class="section reviews" id="resenas">
+      <div class="container">
+        <h2 class="section-title">Lo que dicen los runners</h2>
+        <p class="section-sub">Calificación general 4.8/5 basada en 1,240 reseñas verificadas.</p>
+
+        <div class="reviews-grid">
+          <article class="review-card">
+            <div class="stars">★★★★★</div>
+            <p>Las uso todos los días para entrenar y trabajar. La mejor relación comodidad-resistencia que probé.</p>
+            <footer>
+              <strong>Martina R.</strong>
+              <span>Compra verificada · 3 meses de uso</span>
+            </footer>
+          </article>
+
+          <article class="review-card">
+            <div class="stars">★★★★★</div>
+            <p>Volví a correr después de años y estas zapatillas hicieron la diferencia. Amortiguación excelente.</p>
+            <footer>
+              <strong>Julián P.</strong>
+              <span>Compra verificada · 6 meses de uso</span>
+            </footer>
+          </article>
+
+          <article class="review-card">
+            <div class="stars">★★★★☆</div>
+            <p>Muy cómodas y livianas. Solo me quedaron medio pequeñas, recomiendo pedir medio talle más.</p>
+            <footer>
+              <strong>Federico L.</strong>
+              <span>Compra verificada · 1 mes de uso</span>
+            </footer>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CTA FINAL ================= -->
+    <section class="cta-final">
+      <div class="container">
+        <h2>Tu próxima zapatilla te está esperando</h2>
+        <p>Envío gratis en compras superiores a $75. Devolución sin costo por 60 días.</p>
+        <a href="#talles" class="btn btn-primary btn-lg">Comprar ahora</a>
       </div>
     </section>
 
   </main>
 
   <script type="module" src="./src/js/main.js"></script>
-  <script type="module" src="./src/js/gsap.js"></script>
   <script type="module" src="./src/js/ui.js"></script>
+  <script type="module" src="./src/js/animations.js"></script>
 
 </body>
 </html>
