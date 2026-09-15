@@ -39,7 +39,7 @@ export function initTallesScene(canvas, model) {
   );
 
   plane.rotation.x = -Math.PI / 2;
-  plane.position.y = -1.3;
+  plane.position.y = 0;
   plane.receiveShadow = true;
 
   scene.add(plane);
@@ -81,7 +81,7 @@ export function initTallesScene(canvas, model) {
   /* HELPERS (DEBUG): ejes RGB a la derecha (2.3,-1,0),
      porque la zapa queda a la izquierda en esta sección. */
   const axes = new THREE.AxesHelper(1.5);
-  axes.position.set(2.3, -1, 0);
+  axes.position.set(0, 0, 0);
   scene.add(axes);
 
   /* POSICIÓN de la zapa en esta sección: izquierda (x=-1.1),

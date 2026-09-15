@@ -39,7 +39,7 @@ export function initTechScene(canvas, model) {
   );
 
   plane.rotation.x = -Math.PI / 2;
-  plane.position.y = -1.3;
+  plane.position.y = -0.6;
   plane.receiveShadow = true;
 
   scene.add(plane);
@@ -78,12 +78,12 @@ export function initTechScene(canvas, model) {
 
   /* HELPERS (DEBUG): ejes RGB en (-2.3,-1,0), fuera del centro. */
   const axes = new THREE.AxesHelper(1.5);
-  axes.position.set(-2.3, -1, 0);
+  axes.position.set(0, 0, 0);
   scene.add(axes);
 
   /* POSICIÓN de la zapa en esta sección: centro (0,0,0).
      Rotación inicial -0.6 rad para un ángulo más frontal. */
-  model.position.set(0, 0, 0);
+  model.position.set(1, 0, 0);
   model.rotation.y = -0.6;
 
   scene.add(model);
