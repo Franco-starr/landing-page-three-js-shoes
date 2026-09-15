@@ -38,7 +38,7 @@ if (!reduceMotion) {
      SECTION FADE - telón negro + texto (scrub)
   ========================= */
 
-  const sectionFade = (selector, items) => {
+  const sectionFade = (selector, items, options = {}) => {
     const section = document.querySelector(selector);
     if (!section) return;
 
@@ -58,18 +58,23 @@ if (!reduceMotion) {
       .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 0.9)
       .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 0.96);
 
-    /* Salida: primero desaparece el texto, luego el negro baja y queda */
-    gsap.timeline({
+    /* Salida: primero desaparece el texto, luego el negro baja y queda.
+       Con keepCurtain el telón queda arriba (negro) hasta que la sección
+       termina, para que el switch a la próxima escena ocurra oculto. */
+    const exit = gsap.timeline({
       scrollTrigger: { trigger: selector, start: 'bottom bottom', end: 'bottom top', scrub: 1 }
     })
       .to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, 0)
       .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 0.18)
-      .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 0.26)
-      .to(curtain, { scaleY: 0, duration: 0.6, ease: 'none' }, 0.5);
+      .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 0.26);
+
+    if (!options.keepCurtain) {
+      exit.to(curtain, { scaleY: 0, duration: 0.6, ease: 'none' }, 0.5);
+    }
   };
 
   sectionFade('.features', '.cards .card');
-  sectionFade('.reviews', '.review-card');
+  sectionFade('.reviews', '.review-card', { keepCurtain: true });
 
   /* =========================
      TALLES
@@ -86,6 +91,9 @@ if (!reduceMotion) {
 
   /* =========================
      CTA FINAL
+     Sin telón propio: el violeta de la escena 3 se activa mientras
+     Reseñas (negro) ocupa toda la pantalla y aparece con el scroll.
+     Solo se animan el texto y el pulso del botón.
   ========================= */
 
   gsap.fromTo('.cta-final h2, .cta-final p, .cta-final .btn', { y: 50, autoAlpha: 0 }, {
@@ -105,7 +113,8 @@ if (!reduceMotion) {
     ease: 'sine.inOut'
   });
 } else {
-  /* Sin movimiento: el telón queda completo para no romper el fondo */
+  /* Sin movimiento: los telones de features y reviews quedan completos
+     para no romper el fondo. */
   gsap.set('.features .curtain, .reviews .curtain', { scaleY: 1 });
 }
 
