@@ -53,7 +53,7 @@ if (!reduceMotion) {
     gsap.timeline({
       scrollTrigger: { trigger: selector, start: 'top bottom', end: 'top -60%', scrub: 1 }
     })
-      .to(curtain, { scaleY: 1, duration: 0.7, ease: 'none' }, 0)
+      .to(curtain, { scaleY: 1, duration: 0.7, ease: 'none', immediateRender: false }, 0)
       .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, 0.85)
       .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 0.9)
       .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 0.96);
@@ -64,7 +64,7 @@ if (!reduceMotion) {
     const exit = gsap.timeline({
       scrollTrigger: { trigger: selector, start: 'bottom bottom', end: 'bottom top', scrub: 1 }
     })
-      .to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, 0)
+      .to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none', immediateRender: false }, 0)
       .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 0.18)
       .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 0.26);
 
@@ -114,8 +114,20 @@ if (!reduceMotion) {
   });
 } else {
   /* Sin movimiento: los telones de features y reviews quedan completos
-     para no romper el fondo. */
+     y el texto se muestra, para no romper el fondo ni dejar contenido oculto. */
   gsap.set('.features .curtain, .reviews .curtain', { scaleY: 1 });
+  gsap.set(
+    '.features .section-title, .features .section-sub, .features .card, .reviews .section-title, .reviews .section-sub, .reviews .review-card',
+    { autoAlpha: 1, y: 0 }
+  );
 }
 
-ScrollTrigger.refresh();
+/* Las fuentes y el contexto WebGL alteran el layout después del primer
+   refresh: recalcular los disparadores una vez que todo está asentado
+   para que el primer scroll no muestre/esconda contenido con medidas viejas. */
+const refreshScrollTriggers = () => ScrollTrigger.refresh();
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(refreshScrollTriggers);
+}
+window.addEventListener('load', refreshScrollTriggers);
+refreshScrollTriggers();

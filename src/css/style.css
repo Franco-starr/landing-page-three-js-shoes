@@ -277,6 +277,18 @@ nav a:hover {
   pointer-events: none;
 }
 
+/* Estado inicial oculto: evita que las cartas/títulos se pinten
+   antes de que el módulo de animaciones aplique sus iniciales. */
+.features .section-title,
+.features .section-sub,
+.features .card,
+.reviews .section-title,
+.reviews .section-sub,
+.reviews .review-card {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .cards {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -432,9 +444,12 @@ nav a:hover {
   min-height: 100svh;
   display: flex;
   align-items: center;
-  justify-content: center;
   padding: 140px 0;
-  text-align: center;
+  text-align: left;
+}
+
+.cta-final-content {
+  max-width: 540px;
 }
 
 .cta-final h2 {
