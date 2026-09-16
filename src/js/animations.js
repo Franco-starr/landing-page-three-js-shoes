@@ -49,27 +49,29 @@ if (!reduceMotion) {
     gsap.set(curtain, { scaleY: 0 });
     gsap.set(`${title}, ${sub}, ${items}`, { autoAlpha: 0, y: 40 });
 
-    /* Entrada: el negro sube primero y dura, luego aparece el texto */
-    gsap.timeline({
-      scrollTrigger: { trigger: selector, start: 'top bottom', end: 'top -60%', scrub: 1 }
-    })
-      .to(curtain, { scaleY: 1, duration: 0.7, ease: 'none', immediateRender: false }, 0)
-      .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, 0.85)
-      .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 0.9)
-      .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 0.96);
+    /* Una sola timeline por sección: entrada → espera → salida, recorrida
+       sobre todo el tramo de la sección con scrub. Al subir se reproduce
+       exactamente al revés, sin que dos timelines peleen por el mismo texto. */
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: selector, start: 'top bottom', end: 'bottom top', scrub: 1 }
+    });
 
-    /* Salida: primero desaparece el texto, luego el negro baja y queda.
-       Con keepCurtain el telón queda arriba (negro) hasta que la sección
-       termina, para que el switch a la próxima escena ocurra oculto. */
-    const exit = gsap.timeline({
-      scrollTrigger: { trigger: selector, start: 'bottom bottom', end: 'bottom top', scrub: 1 }
-    })
-      .to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none', immediateRender: false }, 0)
-      .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 0.18)
-      .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 0.26);
+    tl.to(curtain, { scaleY: 1, duration: 0.8, ease: 'none', immediateRender: false }, 0)
+      .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, 1.0)
+      .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 1.1)
+      .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 1.2);
 
-    if (!options.keepCurtain) {
-      exit.to(curtain, { scaleY: 0, duration: 0.6, ease: 'none' }, 0.5);
+    if (options.keepCurtain) {
+      /* El negro queda arriba hasta que la sección termina, para que el
+         switch a la escena oscura ocurra oculto. */
+      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, 3.0)
+        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 3.2)
+        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 3.4);
+    } else {
+      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, 3.0)
+        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 3.2)
+        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 3.4)
+        .to(curtain, { scaleY: 0, duration: 0.6, ease: 'none' }, 4.2);
     }
   };
 
