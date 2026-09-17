@@ -17,7 +17,7 @@ export function initHeroScene(canvas, model) {
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0), donde se apoya la zapa. */
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 0.5, -2);
+  camera.position.set(0, 2, -2);
   camera.lookAt(0, 0.5, 0);
 
   /* RENDERER: vincula el canvas <canvas id="webgl-hero">, antialias y

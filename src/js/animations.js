@@ -113,11 +113,13 @@ if (!reduceMotion) {
     start: 'top center',
     end: 'bottom center',
     snap: {
-      snapTo: (progress) => (progress >= 0.4 && progress <= 0.6) ? 0.5 : undefined,
+      snapTo: (progress) =>
+        (progress >= 0.25 && progress <= 0.75) ? 0.5 : undefined,
       duration: { min: 0.2, max: 0.5 },
       ease: 'power2.inOut'
     }
   });
+
 
   /* =========================
      CTA FINAL
