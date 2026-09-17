@@ -17,10 +17,25 @@ if (!reduceMotion) {
       if (!target) return;
 
       event.preventDefault();
+
+      /* En Tecnología y Reseñas el contenido vive en un stage sticky dentro
+         de una sección de 250vh. Aterrizar justo en el tope deja la entrada
+         del scrub a medias (sobre todo en Reseñas). Bajamos apenas pasado
+         el tope para que la entrada ya esté completa y se vea toda la sección
+         (el stage sigue llenando la pantalla de igual forma).
+         El destino final se calcula explícito y se fuerza en onComplete para
+         que el scroll nunca se quede corto aunque la animación se interrumpa. */
+      const isStage = target.matches('.features, .reviews');
+      const finalY = target.getBoundingClientRect().top + window.scrollY + (isStage ? window.innerHeight * 0.25 : 0);
+
       gsap.to(window, {
-        scrollTo: { y: target, offsetY: 0 },
+        scrollTo: finalY,
         duration: 1.1,
-        ease: 'power3.inOut'
+        ease: 'power3.inOut',
+        onComplete: () => {
+          window.scrollTo(0, finalY);
+          ScrollTrigger.update();
+        }
       });
     });
   });
@@ -56,10 +71,10 @@ if (!reduceMotion) {
       scrollTrigger: { trigger: selector, start: 'top bottom', end: 'bottom top', scrub: 1 }
     });
 
-    tl.to(curtain, { scaleY: 1, duration: 0.8, ease: 'none', immediateRender: false }, 0)
-      .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, 1.0)
-      .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 1.1)
-      .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 1.2);
+    tl.to(curtain, { scaleY: 1, duration: 0.6, ease: 'none', immediateRender: false }, 0)
+      .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, 0.7)
+      .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 0.8)
+      .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 0.9);
 
     if (options.keepCurtain) {
       /* El negro queda arriba hasta que la sección termina, para que el
@@ -89,6 +104,19 @@ if (!reduceMotion) {
     ease: 'power3.out',
     stagger: 0.06,
     scrollTrigger: { trigger: '.sizes', start: 'top 80%' }
+  });
+
+  /* Mini forceo: al pasar cerca de Talles el scroll se atrae suave
+     hasta dejarla centrada verticalmente (progreso 0.5 del rango). */
+  ScrollTrigger.create({
+    trigger: '.talles',
+    start: 'top center',
+    end: 'bottom center',
+    snap: {
+      snapTo: (progress) => (progress >= 0.4 && progress <= 0.6) ? 0.5 : undefined,
+      duration: { min: 0.2, max: 0.5 },
+      ease: 'power2.inOut'
+    }
   });
 
   /* =========================
