@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 
 /* =========================
-   ESCENA 3 - TALLES / CTA
+   ESCENA 3 - CTA FINAL
    Fondo 0x9b51e0, cámara única (0,0,-2), la zapa
-   a la izquierda (x=-1.1) girando (turntable).
-   Se renderiza tanto en Talles como en el CTA final
+   a la izquierda (x=-1.1), estática (sin turntable).
+   Se renderiza en el CTA final
    (el negro de Reseñas la tapa en el medio).
-========================= */
+ ========================= */
 
 export function initTallesScene(canvas, model) {
   /* ESCENA + FONDO: fondo oscuro intermedio. */
@@ -98,11 +98,9 @@ export function initTallesScene(canvas, model) {
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     },
-    /* MOVIMIENTO DE LA ZAPA (Talles/CTA): turntable continuo.
-       s son los segundos desde que arrancó la página;
-       el giro avanza s*0.3 rad/seg para ver la zapa de todos los lados. */
-    render(s) {
-      model.rotation.y = 1.5 + s * 0.3;
+    /* MOVIMIENTO DE LA ZAPA (CTA): sin turntable, la zapa queda
+       estática en 1.5 rad. Solo la sección Talles rota. */
+    render() {
       renderer.render(scene, camera);
     }
   };

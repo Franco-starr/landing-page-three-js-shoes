@@ -340,9 +340,22 @@ nav a:hover {
 }
 
 /* ================= TALLES / COLOR ================= */
+/* La sección entera cede los eventos al canvas 3D (para arrastrar la zapa);
+   solo los botones vuelven a capturarlos. Sin selección de texto. */
+.talles {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
 .talles-grid {
   display: flex;
   justify-content: flex-end;
+}
+
+.talles .sizes button,
+.talles .talles-actions .btn {
+  pointer-events: auto;
 }
 
 .talles-info {

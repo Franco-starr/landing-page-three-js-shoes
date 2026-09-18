@@ -113,11 +113,9 @@ export function initHeroScene(canvas, model) {
 
   /* MOVIMIENTO DE LA ZAPA (hero):
      - Entrada: gsap.from desliza la zapa desde la derecha/abajo
-       (+1.6 en x, +0.7 en y) hacia su posición, girándola (+1.2 rad).
-     - Turntable: vuelta completa (2π = 6.2832 rad) cada 24s, en loop infinito. */
+       (+1.6 en x, +0.7 en y) hacia su posición.
+     - Sin turntable: en el hero la zapa queda estática (solo gira en Talles). */
   gsap.from(model.position, { x: '+=1.6', y: '+=0.7', duration: 1.4, ease: 'power3.out', delay: 0.1 });
-  gsap.from(model.rotation, { y: '+=1.2', duration: 1.4, ease: 'power3.out', delay: 0.1 });
-  gsap.to(model.rotation, { y: '+=6.2832', duration: 24, ease: 'none', repeat: -1, delay: 1.7 });
 
   return {
     /* Resize: recalcula el aspect de la cámara y reacomoda el canvas. */
