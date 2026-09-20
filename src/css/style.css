@@ -5,6 +5,23 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "American Sporty";
+  src: url("../assets/fonts/American Sporty.otf") format("opentype"),
+       url("../assets/fonts/American Sporty.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "KCFonts";
+  src: url("../assets/fonts/FNL_DEMO-KCFonts.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ================= PALETA MONOCROMO NEUTRO ================= */
 :root {
   --bg: #0f0f0f;
@@ -65,7 +82,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: #F54927;
+  background: #ff0000;
   overflow: hidden;
   pointer-events: none;
 }
@@ -77,7 +94,9 @@ body {
   padding: 0;
   pointer-events: none;
   color: #fff;
-  font-family: "Oswald", sans-serif;
+  font-family: "American Sporty", sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
   text-align: center;
 }
 

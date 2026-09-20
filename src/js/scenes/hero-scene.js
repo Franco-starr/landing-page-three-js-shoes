@@ -20,7 +20,7 @@ export function initHeroScene(canvas, model) {
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0), donde se apoya la zapa. */
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 1.3, -1.5);
+  camera.position.set(0, 1.5, -1.5);
   camera.lookAt(0, 0.5, 0);
 
   /* RENDERER: vincula el canvas <canvas id="webgl-hero">, antialias y
@@ -57,7 +57,7 @@ export function initHeroScene(canvas, model) {
        carril central gris claro). Se baja a y=-1.3 para que coincida con el piso.
      - AxesHelper(1.5): ejes de color (rojo=X, verde=Y, azul=Z).
        Se posicionan en (-2.3,-1,0), fuera del centro, para que la zapa no los tape. */
-  const DEBUG = true;
+  const DEBUG = false;
 
   if (DEBUG) {
     const grid = new THREE.GridHelper(12, 12, 0x8f8f8f, 0x454545);
