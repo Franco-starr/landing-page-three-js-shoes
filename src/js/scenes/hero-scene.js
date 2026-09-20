@@ -1,23 +1,26 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 /* =========================
    ESCENA 1 - HERO
-   Fondo 0xF54927, cámara única (0,0,-2), la zapa
-   se ubica a la derecha (x=1.1), entrada GSAP + turntable.
+   Fondo transparente (el naranja lo pinta la capa CSS3D): la zapa flota
+   centrada y el título + subtítulo se dibujan como DOM acostados en el piso
+   (CSS3DRenderer). El canvas WebGL va por encima de esa capa, así el plano
+   ShadowMaterial recibe la sombra de la zapa y la proyecta sobre las letras.
    Se renderiza solo mientras el hero está en pantalla.
 ========================= */
 
 export function initHeroScene(canvas, model) {
-  /* ESCENA + FONDO: acá se crea la escena y se define su color de fondo.
-     El modelo y los helpers se agregan a esta escena. */
+  /* ESCENA: sin background para que el canvas sea transparente y deje ver
+     la capa CSS3D (que pinta el naranja) por debajo. */
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xF54927);
+  scene.background = null;
 
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0), donde se apoya la zapa. */
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 2, -2);
+  camera.position.set(0, 1.3, -1.5);
   camera.lookAt(0, 0.5, 0);
 
   /* RENDERER: vincula el canvas <canvas id="webgl-hero">, antialias y
@@ -107,27 +110,79 @@ export function initHeroScene(canvas, model) {
 
   scene.add(model);
 
-  /* POSICIÓN de la zapa en esta sección: a la derecha (x=1.1),
-     dejando espacio para el texto del hero a la izquierda. */
-  model.position.set(-1.1, 0.5, 0);
+  /* ZAPA: centrada (x=0) y elevada, para flotar por encima del texto que
+     yace en el piso. La keyLight viene de (3,4,2), su sombra cae hacia -x/-z
+     sobre las letras. Queda estática tras la entrada. */
+  model.position.set(0, 0.45, 1.42);
+  model.rotation.y = -1.2;
+  gsap.from(model.position, { y: '+=0.7', duration: 1.4, ease: 'power3.out', delay: 0.1 });
 
-  /* MOVIMIENTO DE LA ZAPA (hero):
-     - Entrada: gsap.from desliza la zapa desde la derecha/abajo
-       (+1.6 en x, +0.7 en y) hacia su posición.
-     - Sin turntable: en el hero la zapa queda estática (solo gira en Talles). */
-  gsap.from(model.position, { x: '+=1.6', y: '+=0.7', duration: 1.4, ease: 'power3.out', delay: 0.1 });
+  /* =========================
+     TEXTO 3D (CSS3DRenderer)
+     El título y el subtítulo son DOM reales acostados en el piso con
+     CSS3DObject. La capa pinta el naranja y va debajo del canvas WebGL, que
+     proyecta la sombra de la zapa sobre las letras.
+  ========================= */
+  const cssScene = new THREE.Scene();
+  const cssRenderer = new CSS3DRenderer();
+  cssRenderer.setSize(window.innerWidth, window.innerHeight);
+  cssRenderer.domElement.className = 'css3d-layer';
+  cssRenderer.domElement.style.visibility = 'hidden';
+  document.body.appendChild(cssRenderer.domElement);
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SCALE = 0.002;   // unidades de mundo por píxel del elemento DOM
+  const flatObjects = [];
+
+  /* Convierte un elemento del hero en texto acostado en el piso.
+     rotation.set(-90°, 0, 180°): normal hacia arriba, letras derechas y
+     legibles desde la cámara (verificado con proyección sobre la cámara real). */
+  const layFlat = (selector, { fontSize, lineHeight = 1, width = null }) => {
+    const el = document.querySelector(selector);
+    if (!el) return null;
+
+    el.classList.add('floor-text');
+    el.style.fontSize = `${fontSize}px`;
+    el.style.lineHeight = `${lineHeight}`;
+    el.style.pointerEvents = 'none';
+    if (width) el.style.width = `${width}px`;
+
+    const object = new CSS3DObject(el);
+    object.rotation.set(-Math.PI / 2, 0, Math.PI);
+    object.scale.setScalar(SCALE);
+    cssScene.add(object);
+    flatObjects.push(object);
+    return object;
+  };
+
+  const titleObj = layFlat('.hero-title', { fontSize: 200 });
+  const subtitleObj = layFlat('.hero-subtitle', { fontSize: 54, lineHeight: 1.2, width: 1000 });
+
+  /* El título va detrás (z positivo = más lejos = más arriba en pantalla);
+     el subtítulo delante, más cerca de la cámara. */
+  if (titleObj) titleObj.position.set(0, 0.01, 0.45);
+  if (subtitleObj) subtitleObj.position.set(0, 0.01, -0.35);
+
+  if (!reduceMotion) {
+    flatObjects.forEach((object, i) => {
+      gsap.from(object.position, { y: -0.5, duration: 1.2, ease: 'power3.out', delay: 0.15 + i * 0.1 });
+    });
+  }
 
   return {
-    /* Resize: recalcula el aspect de la cámara y reacomoda el canvas. */
+    /* La capa CSS3D se muestra/oculta desde main.js junto con el canvas. */
+    cssElement: cssRenderer.domElement,
+    /* Resize: cámara, canvas WebGL y capa CSS3D. */
     resize(w, h) {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      cssRenderer.setSize(w, h);
     },
-    /* Render: pinta la escena con la cámara (lo llama main.js
-       solo cuando el hero está visible). */
+    /* Render: WebGL (zapa + sombra) y CSS3D (texto) con la misma cámara. */
     render() {
       renderer.render(scene, camera);
+      cssRenderer.render(cssScene, camera);
     }
   };
 }

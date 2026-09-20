@@ -44,6 +44,10 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
   scenes.hero = initHeroScene(document.querySelector('#webgl-hero'), model.clone(true));
   scenes.tech = initTechScene(document.querySelector('#webgl-tech'), model.clone(true));
   scenes.talles = initTallesScene(document.querySelector('#webgl-talles'), model.clone(true));
+
+  /* La capa CSS3D del hero recién ahora existe: re-sincronizar para dejar
+     su visibilidad acorde a la sección activa (hero está arriba al cargar). */
+  syncActive();
 });
 
 /* =========================
@@ -90,6 +94,11 @@ function syncActive() {
     canvases[key].style.visibility = 'visible';
   }
   techRotating = rotate;
+
+  /* La capa CSS3D (naranja + texto del piso) solo se ve en el hero. */
+  if (scenes.hero && scenes.hero.cssElement) {
+    scenes.hero.cssElement.style.visibility = key === 'hero' ? 'visible' : 'hidden';
+  }
 
   /* Drag con el mouse sobre la zapa: el canvas tech solo captura eventos
      cuando la sección Talles está al 100% (top <= 0). Al salir (Reseñas)

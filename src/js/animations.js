@@ -45,7 +45,7 @@ if (!reduceMotion) {
   ========================= */
 
   gsap.timeline({ delay: 0.3 }).from(
-    '.hero .eyebrow, .hero .hero-title, .hero .hero-subtitle, .hero .hero-price, .hero .rating, .hero .hero-actions',
+    '.hero .eyebrow, .hero .hero-price, .hero .rating, .hero .hero-actions',
     { y: 40, autoAlpha: 0, duration: 0.7, ease: 'power3.out', stagger: 0.12 }
   );
 

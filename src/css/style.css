@@ -51,6 +51,36 @@ body {
   pointer-events: none;
 }
 
+/* El canvas del hero va POR ENCIMA de la capa CSS3D para que la sombra de
+   la zapa caiga sobre las letras (queda transparente, sin scene.background).
+   La capa CSS3D usa z-index negativo: queda debajo de TODOS los canvases y
+   de las secciones (z-index 1+), así el telón de transición la tapa. */
+#webgl-hero {
+  z-index: 0;
+}
+
+/* Capa del CSS3DRenderer: pinta el naranja del hero y contiene el texto
+   acostado en el piso. Va debajo del canvas, así el canvas la sombrea. */
+.css3d-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #F54927;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Los elementos que el CSS3DRenderer mueve al piso no deben heredar
+   márgenes/tamaños pensados para el layout 2D. */
+.css3d-layer .floor-text {
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+  color: #fff;
+  font-family: "Oswald", sans-serif;
+  text-align: center;
+}
+
 /* ================= UI / NAV ================= */
 .ui {
   position: fixed;
@@ -94,21 +124,64 @@ nav a:hover {
 .hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   position: relative;
-  z-index: 1;
+  z-index: 3;
+}
+
+/* El container del hero debe ocupar TODA la altura del hero para que los
+   hijos absolutos (eyebrow, bloque de compra, texto del piso) se anclen a las
+   esquinas de la sección y no a una caja centrada de altura 0. El margin
+   vertical debe ser 0: con margin:auto el align-items:stretch se ignora y la
+   altura colapsa. */
+.hero > .container {
+  position: relative;
+  margin: 0 auto;
 }
 
 .hero-content {
-  max-width: 540px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-content .btn {
+  pointer-events: auto;
+}
+
+/* El título y el subtítulo se dibujan en el piso vía CSS3D: mientras sigan
+   dentro de .hero-content (antes de que la escena los re-emparente) quedan
+   ocultos para no generar un flash en el layout 2D. */
+.hero-content .hero-title,
+.hero-content .hero-subtitle {
+  visibility: hidden;
 }
 
 .eyebrow {
+  position: absolute;
+  top: 8rem;
+  left: 0;
   font-family: "Staatliches", sans-serif;
   text-transform: uppercase;
   letter-spacing: 3px;
   color: var(--accent);
   margin-bottom: 8px;
+}
+
+/* Bloque inferior derecho: precio/badge, rating y botones. */
+.hero-bottom {
+  position: absolute;
+  right: 0;
+  bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  text-align: right;
+}
+
+.hero-bottom .hero-actions {
+  justify-content: flex-end;
 }
 
 .hero-title {
@@ -570,20 +643,28 @@ nav a:hover {
   }
 
   .hero {
-    justify-content: center;
-    text-align: center;
+    justify-content: initial;
+    text-align: left;
   }
 
-  .hero-content {
-    padding-top: 6rem;
+  .eyebrow {
+    top: 5.5rem;
+  }
+
+  .hero-bottom {
+    right: auto;
+    left: 0;
+    bottom: 2rem;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .hero-price,
-  .rating {
-    justify-content: center;
+  .rating,
+  .hero-bottom .hero-actions {
+    justify-content: flex-start;
   }
 
-  .hero-actions,
   .talles-actions {
     justify-content: center;
   }
