@@ -118,7 +118,7 @@ function animate(t) {
   requestAnimationFrame(animate);
   const s = t / 1000;
 
-  if (active.hero && scenes.hero) scenes.hero.render();
+  if (active.hero && scenes.hero) scenes.hero.render(t);
   if (active.tech && scenes.tech) scenes.tech.render(t, techRotating);
   if (active.talles && scenes.talles) scenes.talles.render();
 }

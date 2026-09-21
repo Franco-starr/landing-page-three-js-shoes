@@ -19,7 +19,11 @@ export function initHeroScene(canvas, model) {
   scene.background = new THREE.Color(0x000000);
 
   /* CÁMARA: única en todas las escenas. Más cerca y baja para llenar el
-     frame (menos "aire" arriba), mirando a la zapa y al texto del piso. */
+     frame (menos "aire" arriba), mirando a la zapa y al texto del piso.
+     CAM_BASE se reusa cada frame para el micro-drift: la orientación queda
+     fija, así el movimiento lento no toca el encuadre. */
+  const CAM_BASE = new THREE.Vector3(0, 1.0, -1.05);
+  const SHAKE_POS = 0.01;
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.set(0, 1.0, -1.05);
   camera.lookAt(0, 0.55, 0.85);
@@ -100,8 +104,8 @@ export function initHeroScene(canvas, model) {
   keyLight.shadow.normalBias = 0.02;
   scene.add(keyLight);
 
-  const fillLight = new THREE.DirectionalLight(0xffffff, 0.6);
-  fillLight.position.set(-3, 2, 2);
+  const fillLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  fillLight.position.set(0, 2, 2);
   scene.add(fillLight);
 
   const rimLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -119,7 +123,7 @@ export function initHeroScene(canvas, model) {
     Math.PI / 5, // 36° de apertura
     0.7 // penumbra suave
   );
-  centerSpot.position.set(0.6, 4.2, 0.6);
+  centerSpot.position.set(0, 4.2, 0.6);
   centerSpot.target.position.set(0, 0.1, 1.5);
   scene.add(centerSpot);
   scene.add(centerSpot.target);
@@ -333,8 +337,21 @@ export function initHeroScene(canvas, model) {
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     },
-    /* Render: asfalto + zapa + sombra + texto de piso, todo en una pasada. */
-    render() {
+    /* Render: asfalto + zapa + sombra + texto de piso, todo en una pasada.
+     t = timestamp del navegador (del render loop de main.js). Micro-drift
+     lento tipo cámara en mano: solo traslación de posición (senos de
+     frecuencia baja, período ~8-12 s) sobre la base. Sin roll ni lookAt por
+     frame: la orientación queda fija y el enquadre no puede modificarse.
+     Desactivado con prefers-reduced-motion. */
+    render(t) {
+      if (!reduceMotion) {
+        const s = (t || 0) / 1000;
+        camera.position.x = CAM_BASE.x + Math.sin(s * 0.6) * SHAKE_POS;
+        camera.position.y = CAM_BASE.y + Math.cos(s * 0.8) * SHAKE_POS;
+        camera.position.z = CAM_BASE.z;
+      } else {
+        camera.position.copy(CAM_BASE);
+      }
       renderer.render(scene, camera);
     }
   };
