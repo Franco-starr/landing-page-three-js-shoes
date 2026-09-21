@@ -21,8 +21,8 @@ export function initHeroScene(canvas, model) {
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0), donde se apoya la zapa. */
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 1.5, -1.5);
-  camera.lookAt(0, 0.5, 0);
+  camera.position.set(0, 1.2, -1.3);
+  camera.lookAt(0, 0.5, 0.5);
 
   /* RENDERER: vincula el canvas <canvas id="webgl-hero">, antialias y
      fondo opaco (la escena pinta su propio negro). El canvas es fijo a
@@ -88,7 +88,7 @@ export function initHeroScene(canvas, model) {
   scene.add(ambient);
 
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
-  keyLight.position.set(1, 2, 7);
+  keyLight.position.set(0, 2, 7);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.width = 2048;
   keyLight.shadow.mapSize.height = 2048;
@@ -120,11 +120,16 @@ export function initHeroScene(canvas, model) {
   const pmrem = new THREE.PMREMGenerator(renderer);
   const envScene = new RoomEnvironment();
   const lightPanel = new THREE.Mesh(
-    new THREE.PlaneGeometry(2, 1.4),
+    new THREE.PlaneGeometry(2.6, 1.8),
     new THREE.MeshBasicMaterial({ color: 0xffffff })
   );
-  lightPanel.position.copy(keyLight.position);
-  lightPanel.lookAt(keyLight.position.x, 0, keyLight.position.z);
+
+  /* Panel desacoplado de la keyLight: su posición/orientación decide dónde
+     cae el charco de reflejo en la banda. Geometría de espejo en el piso:
+     menos y / menos z acerca el reflejo al centro (delante de la zapa);
+     más y / más z lo manda al fondo. */
+  lightPanel.position.set(0, 1.4, 3);
+  lightPanel.lookAt(0, 0, 0.6);
   envScene.add(lightPanel);
   const envMap = pmrem.fromScene(envScene).texture;
   pmrem.dispose();
@@ -163,8 +168,8 @@ export function initHeroScene(canvas, model) {
   /* ZAPA: centrada (x=0) y elevada, para flotar por encima del texto que
      yace en el piso. La keyLight viene de (3,4,2), su sombra cae hacia -x/-z
      sobre las letras. Queda estática tras la entrada. */
-  model.position.set(0, 0.45, 1.42);
-  model.rotation.y = 0;
+  model.position.set(0, 0.45, 1.5);
+  model.rotation.y = -1.3;
   gsap.from(model.position, { y: '+=0.7', duration: 1.4, ease: 'power3.out', delay: 0.1 });
 
   /* =========================
@@ -283,16 +288,21 @@ export function initHeroScene(canvas, model) {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* El título va detrás (z positivo = más lejos = más arriba en pantalla);
-     el subtítulo delante, más cerca de la cámara. Los tamaños 200px/54px
+     el subtítulo delante, más cerca de la cámara. Los tamaños 240px/54px
      y el wrap de 1000px coinciden con la versión CSS3D. */
-  const titlePlane = addFloorText(readText('.hero-title'), 200 * RES, { z: 0.45 });
+  const titlePlane = addFloorText(readText('.hero-title'), 240 * RES, { z: 0.45 });
+
+  /* SUBTÍTULO 3D: COMENTADO a propósito para que no aparezca en la escena.
+     Para volver a mostrarlo, descomentar las líneas de abajo, sumar
+     subtitlePlane al array del gsap.from y ajustar maxWidth si hace falta.
   const subtitlePlane = addFloorText(readText('.hero-subtitle'), 54 * RES, {
     z: -0.35,
     maxWidth: 1000 * RES
   });
+  */
 
   if (!reduceMotion) {
-    [titlePlane, subtitlePlane].forEach((object, i) => {
+    [titlePlane].forEach((object, i) => {
       gsap.from(object.position, { y: -0.5, duration: 1.2, ease: 'power3.out', delay: 0.15 + i * 0.1 });
     });
   }
