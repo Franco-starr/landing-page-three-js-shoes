@@ -18,11 +18,11 @@ export function initHeroScene(canvas, model) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
 
-  /* CÁMARA: única en todas las escenas.
-     Mirando desde (0,0,-2) hacia el origen (0,0,0), donde se apoya la zapa. */
+  /* CÁMARA: única en todas las escenas. Más cerca y baja para llenar el
+     frame (menos "aire" arriba), mirando a la zapa y al texto del piso. */
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 1.2, -1.3);
-  camera.lookAt(0, 0.5, 0.5);
+  camera.position.set(0, 1.0, -1.05);
+  camera.lookAt(0, 0.55, 0.85);
 
   /* RENDERER: vincula el canvas <canvas id="webgl-hero">, antialias y
      fondo opaco (la escena pinta su propio negro). El canvas es fijo a
@@ -38,7 +38,8 @@ export function initHeroScene(canvas, model) {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
+  scene.fog = new THREE.FogExp2(0x000000, 0.12);
+  
   /* PISO DE ASFALTO: textura PBR de calle en el mismo nivel del antiguo
      plano invisible. El asfalto recibe la sombra de la zapa (receiveShadow)
      y ocupa el rol del plano ShadowMaterial, que se comenta más abajo. */
@@ -83,8 +84,10 @@ export function initHeroScene(canvas, model) {
        proyectada baja, su sombra barre el título y el subtítulo en el piso.
         Es la única con castShadow (2048 PCFSoft).
      - fillLight: luz de relleno desde la izquierda (suaviza sombras).
-     - rimLight: contraluz desde atrás (recorta el contorno). */
-  const ambient = new THREE.AmbientLight(0xffffff, 0.25);
+     - rimLight: contraluz desde atrás (recorta el contorno).
+     - centerSpot (solo este hero): spotlight central que ilumina la zapa
+       y el piso del centro con un charco de luz claro. */
+  const ambient = new THREE.AmbientLight(0xffffff, 0.3);
   scene.add(ambient);
 
   const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -105,9 +108,25 @@ export function initHeroScene(canvas, model) {
   rimLight.position.set(0, 3, -3);
   scene.add(rimLight);
 
+  /* SPOT DE CENTRO: luz protagonista que apunta al corazón de la escena
+     (la base de la zapa y el piso donde cae el texto). Crea un charco de
+     luz firme que se nota en la zapa y en el asfalto central. No proyecta
+     sombra: la sombra romántica la sigue haciendo solo el keyLight. */
+  const centerSpot = new THREE.SpotLight(
+    0xffffff,
+    22, // intensidad física (decay 2): clara sin quemar la zapa
+    15, // distancia máxima que ilumina
+    Math.PI / 5, // 36° de apertura
+    0.7 // penumbra suave
+  );
+  centerSpot.position.set(0.6, 4.2, 0.6);
+  centerSpot.target.position.set(0, 0.1, 1.5);
+  scene.add(centerSpot);
+  scene.add(centerSpot.target);
+
   /* TONO DE COLOR: mapeo cinematográfico ACES + espacio de color sRGB. */
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1;
+  renderer.toneMappingExposure = 1.05;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   /* REFLEJOS DEL PISO: se hornea una sola vez un entorno de estudio
