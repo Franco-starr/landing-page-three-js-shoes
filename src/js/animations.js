@@ -128,6 +128,21 @@ if (!reduceMotion) {
     }
   });
 
+  /* Mini forceo en el CTA final: cuando el scroll entra en el último
+     tramo (≥80% del recorrido de la sección) se atrae solo hasta el
+     fondo, asentando la pose final de la zapa y el texto/CTA ya
+     revelados. Mismo estilo que el de Talles. */
+  ScrollTrigger.create({
+    trigger: '.cta-final',
+    start: 'top bottom',
+    end: 'bottom bottom',
+    snap: {
+      snapTo: (progress) => (progress >= 0.8 ? 1 : undefined),
+      duration: { min: 0.2, max: 0.45 },
+      ease: 'power2.inOut'
+    }
+  });
+
 
   /* =========================
      CTA FINAL
