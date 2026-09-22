@@ -79,9 +79,11 @@ export function initTechScene(canvas, model) {
   });
 
   /* HELPERS (DEBUG): ejes RGB en (-2.3,-1,0), fuera del centro. */
+  /*
   const axes = new THREE.AxesHelper(1.5);
   axes.position.set(0, 0, 0);
   scene.add(axes);
+  */
 
   /* POSICIÓN de la zapa en esta sección: centro (0,0,0).
      Rotación inicial -0.6 rad para un ángulo más frontal. */

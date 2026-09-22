@@ -13,6 +13,32 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const loader = new GLTFLoader();
 
+/* PANTALLA DE CARGA: cubre todo (z-index 2000) mientras carga el .glb.
+   La barra se llena con onProgress; se oculta cuando el modelo quedó
+   montado y las fuentes están listas, con un mínimo de exhibición para
+   que no parpadee en cargas rápidas. */
+const loaderEl = document.querySelector('#loader');
+const loaderFill = document.querySelector('#loader-fill');
+const loadStartedAt = Date.now();
+
+document.body.style.overflow = 'hidden';
+
+const updateLoaderFill = (xhr) => {
+  const total = xhr.total || 1;
+  loaderFill.style.width = `${Math.min(100, Math.round((xhr.loaded / total) * 100))}%`;
+};
+
+const hideLoader = () => {
+  Promise.all([
+    new Promise((r) => setTimeout(r, Math.max(0, 700 - (Date.now() - loadStartedAt)))),
+    document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
+  ]).then(() => {
+    loaderEl.classList.add('hidden');
+    document.body.style.overflow = '';
+    ScrollTrigger.refresh();
+  });
+};
+
 /* Objetos creados al cargar el modelo y flags de qué escena está activa. */
 const scenes = {};
 const active = { hero: false, tech: false, talles: false };
@@ -55,6 +81,13 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
   /* Si ya se scrolleó hasta el CTA cuando monta la escena, dejar la zapa
      en la pose que corresponde al scroll actual. */
   if (shoeTrigger) applyShoePose(shoeTrigger.progress);
+
+  hideLoader();
+}, updateLoaderFill, () => {
+  /* Si el modelo falla, igual se libera la pantalla para no dejar un
+     bloqueo invisible. */
+  loaderFill.style.width = '100%';
+  hideLoader();
 });
 
 /* =========================

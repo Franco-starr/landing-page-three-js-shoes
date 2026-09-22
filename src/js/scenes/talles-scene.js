@@ -80,9 +80,11 @@ export function initTallesScene(canvas, model) {
 
   /* HELPERS (DEBUG): ejes RGB a la derecha (2.3,-1,0),
      porque la zapa queda a la izquierda en esta sección. */
-  const axes = new THREE.AxesHelper(1.5);
+  /*
+     const axes = new THREE.AxesHelper(1.5);
   axes.position.set(0, 0, 0);
   scene.add(axes);
+  */
 
   /* POSICIÓN de la zapa en esta sección: izquierda (x=-1.1),
      dejando espacio para el selector de talles a la derecha. */
