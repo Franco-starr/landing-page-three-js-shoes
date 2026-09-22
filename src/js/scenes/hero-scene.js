@@ -376,7 +376,7 @@ export function initHeroScene(canvas, model) {
       }
       const fovRad = (camera.fov * Math.PI) / 180;
       const dist = camera.position.z * -1 + 0.45; // cámara (z -1.05) -> texto (z 0.45)
-      const aspect = window.innerWidth / document.documentElement.clientHeight;
+      const aspect = window.innerWidth / window.innerHeight;
       const visibleW = 2 * dist * Math.tan(fovRad / 2) * aspect;
       textPlanes.forEach((p) => {
         const worldW = p.geometry.parameters.width * p.scale.x;

@@ -219,10 +219,10 @@ requestAnimationFrame(animate);
 const MOBILE_W = 768;
 const TABLET_W = 1024;
 
-/* Altura de LAYOUT VIEWPORT: constante en Chrome Android (no cambia con la
-   barra de URL, a diferencia de innerHeight). Es la referencia correcta para
-   el aspect de cámara/canvas: así el colapso/expansión de la barra NO
-   reencuadra el three.js durante el scroll. */
+/* Métrica de LAYOUT VIEWPORT: constante en Chrome Android (no cambia con la
+   barra de URL). Se usa como METRICA ESTABLE para decidir cuándo re-aplicar
+   layout/resize (gating): como w/clientHeight no varía con la barra, los
+   toggles de la barra nunca reencuadran el three.js. */
 const layoutVh = () => document.documentElement.clientHeight;
 
 const mqTablet = window.matchMedia(`(max-width: ${TABLET_W}px)`);
@@ -263,7 +263,12 @@ function applyLayout(state) {
 
 function handleResize() {
   const w = window.innerWidth;
-  const h = layoutVh();
+  /* El canvas se dimensiona con lo VISIBLE con la barra abierta (= svh /
+     innerHeight), igual que las secciones: así canvas y hero comparten la
+     misma caja y el 3D queda centrado en el hero sin cintas en los bordes.
+     Como resize() solo corre detrás del gating (cambio real), los toggles
+     de barra no lo vuelven a tocar. */
+  const h = window.innerHeight;
   const state = getState();
 
   const aspect = w / h;
