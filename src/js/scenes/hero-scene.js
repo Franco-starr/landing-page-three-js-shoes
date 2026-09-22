@@ -17,6 +17,7 @@ export function initHeroScene(canvas, model) {
      todo el contenido (asfalto, texto, zapa y sombra) vive en esta escena. */
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
+  scene.fog = new THREE.FogExp2(0x000000, 0.12);
 
   /* CÁMARA: única en todas las escenas. Más cerca y baja para llenar el
      frame (menos "aire" arriba), mirando a la zapa y al texto del piso.
@@ -42,7 +43,7 @@ export function initHeroScene(canvas, model) {
 
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  scene.fog = new THREE.FogExp2(0x000000, 0.12);
+  
   
   /* PISO DE ASFALTO: textura PBR de calle en el mismo nivel del antiguo
      plano invisible. El asfalto recibe la sombra de la zapa (receiveShadow)

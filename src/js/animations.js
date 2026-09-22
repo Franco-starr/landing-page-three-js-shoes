@@ -106,6 +106,14 @@ if (!reduceMotion) {
     scrollTrigger: { trigger: '.sizes', start: 'top 80%' }
   });
 
+  gsap.fromTo('.talles-hint', { y: 12, autoAlpha: 0 }, {
+    y: 0,
+    autoAlpha: 1,
+    duration: 0.5,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: '.talles-hint', start: 'top 85%' }
+  });
+
   /* Mini forceo: al pasar cerca de Talles el scroll se atrae suave
      hasta dejarla centrada verticalmente (progreso 0.5 del rango). */
   ScrollTrigger.create({

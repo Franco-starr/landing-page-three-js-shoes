@@ -516,6 +516,14 @@ nav a:hover {
   font-size: 0.9rem;
 }
 
+.talles-hint {
+  margin-top: 22px;
+  font-size: 0.82rem;
+  letter-spacing: 0.5px;
+  color: var(--text-faint);
+  opacity: 0.85;
+}
+
 /* ================= CTA FINAL ================= */
 /* Sección de 3 pantallas con stage sticky: la zapa 3D (escena violeta)
    rota a la vista durante ~2 pantallas y el texto/CTA quedan pinneados

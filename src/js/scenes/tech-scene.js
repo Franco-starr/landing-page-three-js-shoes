@@ -13,7 +13,7 @@ import gsap from 'gsap';
 export function initTechScene(canvas, model) {
   /* ESCENA + FONDO: escena propia y fondo más oscuro que el hero. */
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x2f80ed);
+  scene.background = new THREE.Color(0x1A1A1A);
 
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0). */
@@ -41,7 +41,7 @@ export function initTechScene(canvas, model) {
   );
 
   plane.rotation.x = -Math.PI / 2;
-  plane.position.y = -0.6;
+  plane.position.y = -1;
   plane.receiveShadow = true;
 
   scene.add(plane);
