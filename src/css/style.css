@@ -517,15 +517,26 @@ nav a:hover {
 }
 
 /* ================= CTA FINAL ================= */
+/* Sección de 3 pantallas con stage sticky: la zapa 3D (escena violeta)
+   rota a la vista durante ~2 pantallas y el texto/CTA quedan pinneados
+   hasta el final del recorrido. */
 .cta-final {
   position: relative;
   z-index: 1;
-  min-height: 100vh;
-  min-height: 100svh;
+  min-height: 300vh;
+  min-height: 300svh;
+  display: block;
+  padding: 0;
+  text-align: left;
+}
+
+.cta-final .container {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
   display: flex;
   align-items: center;
-  padding: 140px 0;
-  text-align: left;
 }
 
 .cta-final-content {

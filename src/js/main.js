@@ -2,6 +2,8 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { initHeroScene } from './scenes/hero-scene.js';
 import { initTechScene } from './scenes/tech-scene.js';
 import { initTallesScene } from './scenes/talles-scene.js';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 /* =========================
    MAIN.JS - ORQUESTADOR
@@ -49,6 +51,10 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
      visibilidad de su canvas acorde a la sección activa (hero está arriba
      al cargar). */
   syncActive();
+
+  /* Si ya se scrolleó hasta el CTA cuando monta la escena, dejar la zapa
+     en la pose que corresponde al scroll actual. */
+  if (shoeTrigger) applyShoePose(shoeTrigger.progress);
 });
 
 /* =========================
@@ -106,6 +112,41 @@ function syncActive() {
 window.addEventListener('scroll', syncActive, { passive: true });
 window.addEventListener('resize', syncActive);
 syncActive();
+
+/* =========================
+   POSE DE LA ZAPA POR SCROLL (sección CTA final)
+   ScrollTrigger usa la geometría real de la sección (sin suposiciones
+   de altura):
+   - start 'top 150%'   -> el giro arranca cuando la escena 3D se activa
+     (top del .cta-final en 1.5*vh), es decir justo cuando el telón negro
+     de Reseñas empieza a irse y el three.js queda a la vista. Así la zapa
+     YA está rotando apenas se la empieza a ver.
+   - end 'bottom bottom' -> progreso 1 (pose final del usuario: la zapa
+     queda exactamente en esa rotación al llegar al fondo de la página).
+   Con la sección de 300svh el rango va de +150vh a -200vh (350vh).
+   La interpolación (x/y/z) la hace talles-scene.setShoePose.
+   Reversa exacta al subir el scroll.
+ ========================= */
+
+function applyShoePose(progress) {
+  if (!scenes.talles || !scenes.talles.setShoePose) return;
+  scenes.talles.setShoePose(progress);
+}
+
+let shoeTrigger = null;
+
+function initShoeScroll() {
+  shoeTrigger = ScrollTrigger.create({
+    trigger: '.cta-final',
+    start: 'top 150%',
+    end: 'bottom bottom',
+    onUpdate: (self) => applyShoePose(self.progress)
+  });
+  applyShoePose(shoeTrigger.progress);
+}
+
+gsap.registerPlugin(ScrollTrigger);
+initShoeScroll();
 
 /* =========================
    RENDER LOOP

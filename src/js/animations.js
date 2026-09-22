@@ -125,17 +125,22 @@ if (!reduceMotion) {
      CTA FINAL
      Sin telón propio: el violeta de la escena 3 se activa mientras
      Reseñas (negro) ocupa toda la pantalla y aparece con el scroll.
-     Solo se animan el texto y el pulso del botón.
+     La zapa 3D gira durante todo el tramo visible (ver main.js) y el
+     texto/CTA aparecen recién en el ÚLTIMO tramo, cuando la zapa ya
+     casi terminó el giro. Al subir, se revierte.
   ========================= */
 
-  gsap.fromTo('.cta-final h2, .cta-final p, .cta-final .btn', { y: 50, autoAlpha: 0 }, {
-    y: 0,
-    autoAlpha: 1,
-    duration: 0.8,
-    ease: 'power3.out',
-    stagger: 0.15,
-    scrollTrigger: { trigger: '.cta-final', start: 'top 75%' }
-  });
+  gsap.set('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 0, y: 50 });
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: '.cta-final',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1
+    },
+    defaults: { ease: 'none' }
+  })
+    .to('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 1, y: 0, duration: 0.12, stagger: 0.06 }, 0.72);
 
   gsap.to('.cta-final .btn-primary', {
     scale: 1.04,

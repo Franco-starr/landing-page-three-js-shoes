@@ -87,7 +87,13 @@ export function initTallesScene(canvas, model) {
   /* POSICIÓN de la zapa en esta sección: izquierda (x=-1.1),
      dejando espacio para el selector de talles a la derecha. */
   model.position.set(-1.1, 0, 0);
-  model.rotation.y = 1.5;
+
+  /* POSE POR SCROLL: la zapa interpola desde la pose inicial (la clásica
+     en 1.5) hasta la pose final que dejó el usuario (x 6.80 ~ 0.52 rad,
+     y -2, z 0.8) durante TODO el scroll de la sección CTA final. */
+  const SHOE_POSE_START = { x: 0, y: 1.5, z: 0 };
+  const SHOE_POSE_END = { x: 6.8 - Math.PI * 2, y: -2, z: 0.8 };
+  model.rotation.set(SHOE_POSE_START.x, SHOE_POSE_START.y, SHOE_POSE_START.z);
 
   scene.add(model);
 
@@ -98,8 +104,17 @@ export function initTallesScene(canvas, model) {
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     },
-    /* MOVIMIENTO DE LA ZAPA (CTA): sin turntable, la zapa queda
-       estática en 1.5 rad. Solo la sección Talles rota. */
+    /* MOVIMIENTO DE LA ZAPA (CTA): p (0..1) llega desde el scroll y la
+       pose se interpola linealmente entre la inicial y la final (ver
+       main.js). Al llegar al tope la zapa queda exactamente en la pose
+       final del usuario. */
+    setShoePose(p) {
+      model.rotation.set(
+        SHOE_POSE_START.x + (SHOE_POSE_END.x - SHOE_POSE_START.x) * p,
+        SHOE_POSE_START.y + (SHOE_POSE_END.y - SHOE_POSE_START.y) * p,
+        SHOE_POSE_START.z + (SHOE_POSE_END.z - SHOE_POSE_START.z) * p
+      );
+    },
     render() {
       renderer.render(scene, camera);
     }
