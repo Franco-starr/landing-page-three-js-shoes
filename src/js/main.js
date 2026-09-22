@@ -109,6 +109,10 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
      oculto y aparece con el scroll hacia el final. Ahí la zapa ya no gira.
  ========================= */
 
+/* Los cortes se miden contra innerHeight de ARRANQUE: las secciones están
+   dimensionadas en svh (= innerHeight con la barra visible, el estado normal
+   de carga en mobile). Usar el layout viewport (clientHeight, más grande)
+   retrasaría el pre-activado de Talles y el switch se vería. */
 const couple = [
   ['hero',   false, document.querySelector('.hero'),            0],
   ['tech',   false, document.querySelector('.features'),        0],
@@ -182,6 +186,7 @@ function initShoeScroll() {
 }
 
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
 initShoeScroll();
 
 /* =========================
@@ -214,31 +219,90 @@ requestAnimationFrame(animate);
 const MOBILE_W = 768;
 const TABLET_W = 1024;
 
+/* Altura de LAYOUT VIEWPORT: constante en Chrome Android (no cambia con la
+   barra de URL, a diferencia de innerHeight). Es la referencia correcta para
+   el aspect de cámara/canvas: así el colapso/expansión de la barra NO
+   reencuadra el three.js durante el scroll. */
+const layoutVh = () => document.documentElement.clientHeight;
+
 const mqTablet = window.matchMedia(`(max-width: ${TABLET_W}px)`);
 const mqMobile = window.matchMedia(`(max-width: ${MOBILE_W}px)`);
 
 function getState() {
   const w = window.innerWidth;
-  const aspect = w / window.innerHeight;
+  const aspect = w / layoutVh();
   if (w < MOBILE_W) return 'mobile';                    // celular
   if (w <= TABLET_W || aspect < 1.35) return 'tablet';  // tablet portrait o media ventana
   return 'desktop';
 }
 
+/* Cachés de lo último que se aplicó. Parten en null para que el primer
+   handleResize() (al montar las escenas) fuerce el layout inicial. */
+let lastState = null;
+let lastLayoutState = null;
+let lastAspect = window.innerWidth / layoutVh();
+const ASPECT_EPSILON = 0.2;
+let resizeRaf = null;
+
+/* layout(state) solo cambia cosas que se "ven" al escrollar (escala del
+   texto 3D, posición de la zapa, pixel ratio). Re-ejecutarlo en cada
+   resize provocaría parpadeo del texto en mobile cuando Chrome Android
+   colapsa/expande la barra de URL (cambia innerHeight -> aspect varía
+   ~0.1-0.17). Por eso, JUNTO CON scene.resize(), se aplica SOLO cuando
+   cambió el estado (mobile/tablet/desktop) o el aspect cambió de forma
+   realmente significativa (> ASPECT_EPSILON, ej. rotación de pantalla o
+   resize real de la ventana). syncActive() sí corre siempre: es barato y
+   mantiene la visibilidad de sección al día. */
+function applyLayout(state) {
+  if (lastLayoutState === state) return;
+  lastLayoutState = state;
+  [scenes.hero, scenes.tech, scenes.talles].forEach((scene) => {
+    if (scene && scene.layout) scene.layout(state);
+  });
+}
+
 function handleResize() {
   const w = window.innerWidth;
-  const h = window.innerHeight;
+  const h = layoutVh();
   const state = getState();
 
-  [scenes.hero, scenes.tech, scenes.talles].forEach((scene) => {
-    if (!scene) return;
-    if (scene.layout) scene.layout(state);
-    scene.resize(w, h);
-  });
+  const aspect = w / h;
+  const stateChanged = state !== lastState;
+  const aspectChanged = Math.abs(aspect - lastAspect) > ASPECT_EPSILON;
+  lastState = state;
+  lastAspect = aspect;
+
+  /* Layout Y tamaño de canvas se aplican SOLO en cambios reales (rotación,
+     resize de ventana). En mobile el colapso/expansión de la barra de URL
+     dispara resizes con h constante (clientHeight): como w/h no cambia, acá
+     no entra nada y el three.js no se reencuadra → sin parpadeo al scrollear. */
+  if (stateChanged || aspectChanged) {
+    applyLayout(state);
+    [scenes.hero, scenes.tech, scenes.talles].forEach((scene) => {
+      if (!scene) return;
+      scene.resize(w, h);
+    });
+  }
 
   syncActive();
 }
 
-window.addEventListener('resize', handleResize);
-window.addEventListener('orientationchange', () => { setTimeout(handleResize, 250); });
+window.addEventListener('resize', () => {
+  if (resizeRaf) return;
+  resizeRaf = requestAnimationFrame(() => {
+    resizeRaf = null;
+    handleResize();
+  });
+});
+
+window.addEventListener('orientationchange', () => {
+  /* Al rotar, resetear las cachés para que el layout se re-aplique por
+     fuerza: el aspect guardado y el estado pueden coincidir por casualidad
+     (ej. un celular sigue siendo 'mobile' en ambas orientaciones). */
+  lastState = null;
+  lastLayoutState = null;
+  lastAspect = window.innerWidth / layoutVh();
+  setTimeout(handleResize, 250);
+});
+
 [mqTablet, mqMobile].forEach((mq) => mq.addEventListener('change', () => { handleResize(); ScrollTrigger.refresh(); }));

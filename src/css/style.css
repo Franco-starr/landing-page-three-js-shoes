@@ -765,7 +765,7 @@ nav a:hover {
   }
 
   .eyebrow {
-    top: calc(8.3rem + env(safe-area-inset-top, 0px));
+    top: calc(7.3rem + env(safe-area-inset-top, 0px));
   }
 
   .hero-bottom {
