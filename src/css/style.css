@@ -708,6 +708,17 @@ nav a:hover {
     display: flex;
   }
 
+  /* Nav más compacta en mobile: menos padding vertical y logo más chico
+     (la base usa 22px 0 y 70px de ancho). El alto de la barra pasa de
+     ~71px a ~46px y el menú desplegable se sincroniza con ese valor. */
+  nav {
+    padding: 8px 0;
+  }
+
+  nav .brand img {
+    width: 46px;
+  }
+
   /* El logo debe quedar por encima del <nav ul> fijo que crece con el
      clip-path al abrir el menú; sin esto el círculo pasa "por encima" del
      logo y lo corta durante la animación. */
@@ -718,7 +729,7 @@ nav a:hover {
 
   nav ul {
     position: fixed;
-    top: 71px;
+    top: 46px;
     left: 0;
     width: 100%;
     background: #111;
