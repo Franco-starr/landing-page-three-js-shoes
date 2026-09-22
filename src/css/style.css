@@ -660,6 +660,34 @@ nav a:hover {
   bottom: auto;
 }
 
+/* ================= TABLET ================= */
+@media (max-width: 1024px) {
+  nav ul {
+    gap: 1.3rem;
+  }
+
+  .reviews-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* La zapa 3D se acerca al centro en narrow (layout de tech-scene);
+     el bloque de talles deja de empujarse a la derecha para no pisarla. */
+  .talles-grid {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .talles-actions {
+    justify-content: center;
+  }
+
+  .talles-info {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}
+
 /* ================= MOBILE ================= */
 @media (max-width: 992px) {
   .cards {
@@ -678,6 +706,14 @@ nav a:hover {
 
   .menu-toggle {
     display: flex;
+  }
+
+  /* El logo debe quedar por encima del <nav ul> fijo que crece con el
+     clip-path al abrir el menú; sin esto el círculo pasa "por encima" del
+     logo y lo corta durante la animación. */
+  .brand {
+    position: relative;
+    z-index: 1101;
   }
 
   nav ul {
@@ -718,21 +754,27 @@ nav a:hover {
   }
 
   .eyebrow {
-    top: 5.5rem;
+    top: calc(8.3rem + env(safe-area-inset-top, 0px));
   }
 
   .hero-bottom {
-    right: auto;
+    right: 0;
     left: 0;
     bottom: 2rem;
-    align-items: flex-start;
-    text-align: left;
+    align-items: center;
+    text-align: center;
   }
 
   .hero-price,
   .rating,
   .hero-bottom .hero-actions {
     justify-content: flex-start;
+  }
+
+  /* El botón "Agregar al carrito" del hero queda centrado (el bloque ya se
+     centró más arriba). */
+  .hero-bottom .hero-actions {
+    justify-content: center;
   }
 
   .talles-actions {

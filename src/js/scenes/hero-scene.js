@@ -196,6 +196,21 @@ export function initHeroScene(canvas, model) {
   model.rotation.y = -1.3;
   gsap.from(model.position, { y: '+=0.7', duration: 1.4, ease: 'power3.out', delay: 0.1 });
 
+  /* ESCALA RESPONSIVE de la zapa: el valor default es 1 (tamaño actual).
+     En celular se achica al 90% (0.90) para que se vea entera; tablet y
+     desktop quedan a tamaño original. */
+  const SHOE_SCALE = { desktop: 1, tablet: 1, mobile: 0.90 };
+
+  /* POSICIÓN RESPONSIVE de la zapa: en mobile se desplaza un poco hacia la
+     derecha (x positivo) para despejar el botón "Agregar al carrito", que
+     queda abajo a la izquierda. x = izquierda/derecha, y = altura,
+     z = cerca/lejos de la cámara. */
+  const SHOE_POS = {
+    desktop: { x: 0, y: 0.45, z: 1.5 },
+    tablet:  { x: 0, y: 0.45, z: 1.5 },
+    mobile:  { x: -0.05, y: 0.45, z: 1.5 }
+  };
+
   /* =========================
      TEXTO EN EL PISO (CanvasTexture)
      El título y el subtítulo se dibujan en un canvas 2D offscreen y se
@@ -287,6 +302,9 @@ export function initHeroScene(canvas, model) {
      El ancho sale del canvas real * TEXT_SCALE (mismas proporciones que la
      versión CSS3D: em de 200px -> 0.4 unidades de mundo). El material
      recibe la sombra de la zapa (receiveShadow). */
+  /* Planos de texto del piso (para escalarlos juntos en narrow). */
+  const textPlanes = [];
+
   const addFloorText = (text, fontSize, { x = 0, z = 0, maxWidth = 0 }) => {
     const texture = makeTextTexture(text, fontSize, { maxWidth });
     const plane = new THREE.Mesh(
@@ -306,6 +324,7 @@ export function initHeroScene(canvas, model) {
     plane.rotation.z = Math.PI; // <--- AGREGA ESTA LÍNEA (Gira el texto hacia la cámara)
     plane.position.set(x, 0.01, z);
     scene.add(plane);
+    textPlanes.push(plane);
     return plane;
   };
 
@@ -337,6 +356,33 @@ export function initHeroScene(canvas, model) {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+    },
+    /* Layout responsive por estado: en desktop la zapa queda a escala 1 y el
+       texto del piso a tamaño original. En tablet/celular se aplica la escala
+       de la zapa (SHOE_SCALE, 0.90 en mobile) y el texto ancho se autoajusta
+       para entrar en el campo horizontal visible (lo único que el aspect
+       angosto recorta). El texto se escala alrededor de su propio centro, así
+       queda acostado a la misma altura (sin hundirse en la banda glossy).
+       También baja el pixel ratio en mobile/tablet. */
+    layout(state) {
+      const narrow = state !== 'desktop';
+      const pos = SHOE_POS[state] ?? SHOE_POS.desktop;
+      model.position.set(pos.x, pos.y, pos.z);
+      model.scale.setScalar(SHOE_SCALE[state] ?? 1);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, narrow ? 1.5 : 2));
+      if (!narrow) {
+        textPlanes.forEach((p) => { p.scale.setScalar(1); });
+        return;
+      }
+      const fovRad = (camera.fov * Math.PI) / 180;
+      const dist = camera.position.z * -1 + 0.45; // cámara (z -1.05) -> texto (z 0.45)
+      const aspect = window.innerWidth / window.innerHeight;
+      const visibleW = 2 * dist * Math.tan(fovRad / 2) * aspect;
+      textPlanes.forEach((p) => {
+        const worldW = p.geometry.parameters.width * p.scale.x;
+        const s = Math.max(0.45, Math.min(1, (visibleW * 0.9) / worldW));
+        p.scale.setScalar(s);
+      });
     },
     /* Render: asfalto + zapa + sombra + texto de piso, todo en una pasada.
      t = timestamp del navegador (del render loop de main.js). Micro-drift

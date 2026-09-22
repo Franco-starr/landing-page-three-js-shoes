@@ -78,6 +78,10 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
      al cargar). */
   syncActive();
 
+  /* Aplica el layout responsive según el viewport actual (si ya se abrió
+     en tablet/media ventana, empezar angosto y no en el layout desktop). */
+  handleResize();
+
   /* Si ya se scrolleó hasta el CTA cuando monta la escena, dejar la zapa
      en la pose que corresponde al scroll actual. */
   if (shoeTrigger) applyShoePose(shoeTrigger.progress);
@@ -143,7 +147,6 @@ function syncActive() {
 }
 
 window.addEventListener('scroll', syncActive, { passive: true });
-window.addEventListener('resize', syncActive);
 syncActive();
 
 /* =========================
@@ -200,17 +203,42 @@ function animate(t) {
 requestAnimationFrame(animate);
 
 /* =========================
-   RESIZE
-   Al redimensionar se actualiza el aspect de cada cámara y el tamaño
-   de cada renderer (las cámaras miran al origen, la posición la pone
-   la zapa, así que no hay que reposicionar nada acá).
+   RESIZE + LAYOUT RESPONSIVE
+   Cada escena expone layout(state) para re-componer su encuadre según el
+   viewport (desktop / tablet / mobile) y resize(w, h) para el aspect +
+   tamaño del canvas. Un solo handler unifica resize y orientationchange.
+   El refresh de ScrollTrigger evita que los triggers queden con medidas
+   viejas tras cambiar el layout.
 ========================= */
 
-window.addEventListener('resize', () => {
+const MOBILE_W = 768;
+const TABLET_W = 1024;
+
+const mqTablet = window.matchMedia(`(max-width: ${TABLET_W}px)`);
+const mqMobile = window.matchMedia(`(max-width: ${MOBILE_W}px)`);
+
+function getState() {
+  const w = window.innerWidth;
+  const aspect = w / window.innerHeight;
+  if (w < MOBILE_W) return 'mobile';                    // celular
+  if (w <= TABLET_W || aspect < 1.35) return 'tablet';  // tablet portrait o media ventana
+  return 'desktop';
+}
+
+function handleResize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
+  const state = getState();
 
-  if (scenes.hero) scenes.hero.resize(w, h);
-  if (scenes.tech) scenes.tech.resize(w, h);
-  if (scenes.talles) scenes.talles.resize(w, h);
-});
+  [scenes.hero, scenes.tech, scenes.talles].forEach((scene) => {
+    if (!scene) return;
+    if (scene.layout) scene.layout(state);
+    scene.resize(w, h);
+  });
+
+  syncActive();
+}
+
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', () => { setTimeout(handleResize, 250); });
+[mqTablet, mqMobile].forEach((mq) => mq.addEventListener('change', () => { handleResize(); ScrollTrigger.refresh(); }));

@@ -87,8 +87,11 @@ export function initTallesScene(canvas, model) {
   */
 
   /* POSICIÓN de la zapa en esta sección: izquierda (x=-1.1),
-     dejando espacio para el selector de talles a la derecha. */
-  model.position.set(-1.1, 0, 0);
+     dejando espacio para el selector de talles a la derecha.
+     SHOE_X: en tablet/mobile el aspect colapsa el campo horizontal y x=-1.1
+     se cortaría por la izquierda; se acerca al centro (-0.6 / -0.45). */
+  const SHOE_X = { desktop: -1.1, tablet: -0.6, mobile: -0.45 };
+  model.position.set(SHOE_X.desktop, 0, 0);
 
   /* POSE POR SCROLL: la zapa interpola desde la pose inicial (la clásica
      en 1.5) hasta la pose final que dejó el usuario (x 6.80 ~ 0.52 rad,
@@ -105,6 +108,14 @@ export function initTallesScene(canvas, model) {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+    },
+    /* Layout responsive por estado: recorta el offset lateral de la zapa en
+       tablet/mobile para que no se salga del frame (ver SHOE_X) y baja el
+       pixel ratio en esos estados. La pose por scroll (setShoePose) solo
+       rota, así que no interfiere. */
+    layout(state) {
+      model.position.x = SHOE_X[state] ?? SHOE_X.desktop;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, state !== 'desktop' ? 1.5 : 2));
     },
     /* MOVIMIENTO DE LA ZAPA (CTA): p (0..1) llega desde el scroll y la
        pose se interpola linealmente entre la inicial y la final (ver

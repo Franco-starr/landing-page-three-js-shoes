@@ -86,8 +86,12 @@ export function initTechScene(canvas, model) {
   */
 
   /* POSICIÓN de la zapa en esta sección: centro (0,0,0).
-     Rotación inicial -0.6 rad para un ángulo más frontal. */
-  model.position.set(1, 0, 0);
+     Rotación inicial -0.6 rad para un ángulo más frontal.
+     SHOE_X: en tablet/mobile el aspect colapsa el campo horizontal y si la
+     zapa quedara en x=1 se cortaría por la derecha, así que se acerca al
+     centro (0.55). */
+  const SHOE_X = { desktop: 1, tablet: 0.55, mobile: 0.55 };
+  model.position.set(SHOE_X.desktop, 0, 0);
   model.rotation.y = -0.6;
 
   scene.add(model);
@@ -161,6 +165,13 @@ export function initTechScene(canvas, model) {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+    },
+    /* Layout responsive por estado: recorta el offset lateral de la zapa en
+       tablet/mobile para que no se salga del frame (ver SHOE_X) y baja el
+       pixel ratio en esos estados. El drag/turntable no se tocan. */
+    layout(state) {
+      model.position.x = SHOE_X[state] ?? SHOE_X.desktop;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, state !== 'desktop' ? 1.5 : 2));
     },
     /* MOVIMIENTO DE LA ZAPA: turntable solo en la sección Talles.
        t lo pasa main.js (timestamp del navegador); rotating se prende
