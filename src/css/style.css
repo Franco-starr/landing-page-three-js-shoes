@@ -478,6 +478,22 @@ nav a:hover {
   pointer-events: none;
 }
 
+/* Card para la zapa 3D en mobile portrait: cuadrado con fondo oscuro y borde
+   sutil que ENCIERRA el mini-canvas three.js. Por defecto no se muestra;
+   solo se activa en portrait (abajo). */
+.talles-card {
+  display: none;
+}
+
+.talles-card-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+}
+
 .talles-grid {
   display: flex;
   justify-content: flex-end;
@@ -707,7 +723,7 @@ nav a:hover {
   }
 
   .ui {
-    background-color: #111;
+    background-color: #000000;
   }
 
   .menu-toggle {
@@ -738,7 +754,7 @@ nav a:hover {
     top: 46px;
     left: 0;
     width: 100%;
-    background: #111;
+    background: #000000;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -798,7 +814,14 @@ nav a:hover {
     justify-content: center;
   }
 
-  .features,
+  /* En mobile features se recorta (200svh base → 160svh): la sección
+     termina antes y Talles aparece más rápido, sin tramo largo de zapa
+     girando antes del formulario. Reviews mantiene 200svh. */
+  .features {
+    min-height: 160vh;
+    min-height: 160svh;
+  }
+
   .reviews {
     min-height: 200vh;
     min-height: 200svh;
@@ -931,6 +954,14 @@ nav a:hover {
     font-size: 0.74rem;
     line-height: 1.35;
   }
+
+  /* En celus muy bajitos la card se achica para que entre card + formulario
+     en la misma pantalla sin scroll extra. */
+  .talles-card {
+    width: min(46vw, 200px);
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
 }
 
 /* En pantallas horizontales el stage sticky es bajito: las features pasan a
@@ -941,12 +972,45 @@ nav a:hover {
   }
 }
 
-/* Talles en mobile portrait: la zapa 3D queda arriba (la sube tech-scene) y
-   el formulario (título, números, precio y CTA) baja al fondo de la sección.
+/* Talles en mobile portrait: la zapa 3D vive DENTRO de una card oscura
+   (cuadrado) en la mitad superior, y el formulario (título, números, precio
+   y CTA) queda centrado debajo. El fondo de la sección es el mismo gris de
+   la card porque el canvas 3D del three.js ya no cubre toda la pantalla acá.
    En landscape se mantiene centrado como desktop para no pisarse con la zapa. */
 @media (max-width: 768px) and (orientation: portrait) {
+  /* Características = exactamente el stage sticky (100svh, ya muestra las 6
+     cards): sin cola vacía entre el contenido y Talles. El fondo usa el mismo
+     gris de Talles para que el final del reveal no deje una banda más oscura. */
+  .features {
+    min-height: 100vh;
+    min-height: 100svh;
+    background: #1a1a1a;
+  }
+
   .talles {
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    background: #1a1a1a;
     padding: 24px 0 calc(2rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .talles-card {
+    position: relative;
+    display: block;
+    width: min(62vw, 300px);
+    aspect-ratio: 1 / 1;
+    border-radius: 28px;
+    background: #1a1a1a;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    margin: 0 auto 20px;
+    pointer-events: auto;
+  }
+
+  .talles-grid {
+    width: 100%;
+    justify-content: center;
   }
 }

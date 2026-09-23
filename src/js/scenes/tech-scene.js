@@ -10,14 +10,20 @@ import gsap from 'gsap';
    (detrás del telón negro, que la tapa y la destapa).
  ========================= */
 
-export function initTechScene(canvas, model) {
+export function initTechScene(canvas, model, options = {}) {
+  const card = !!options.card;
+  /* En modo card el renderer dimensiona el canvas por el rect del elemento
+     (cuadrado de la card en mobile) en vez del viewport completo. */
+  const rect = () => canvas.getBoundingClientRect();
+
   /* ESCENA + FONDO: escena propia y fondo más oscuro que el hero. */
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x1A1A1A);
 
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0). */
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const aspect = card ? (rect().width || 1) / (rect().height || 1) : window.innerWidth / window.innerHeight;
+  const camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 1000);
   camera.position.set(0, 0, -2);
   camera.lookAt(0, 0, 0);
 
@@ -31,7 +37,11 @@ export function initTechScene(canvas, model) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  renderer.setSize(window.innerWidth, window.innerHeight, false);
+  if (card) {
+    renderer.setSize(rect().width || 1, rect().height || 1, false);
+  } else {
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+  }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   /* PISO (sombra): igual que el resto de las escenas, en y=-1.3. */
@@ -85,7 +95,7 @@ export function initTechScene(canvas, model) {
   scene.add(axes);
   */
 
-  /* POSICIÓN de la zapa en esta sección: centro (0,0,0).
+/* POSICIÓN de la zapa en esta sección: centro (0,0,0).
      Rotación inicial -0.6 rad para un ángulo más frontal.
      SHOE_X: en tablet/mobile el aspect colapsa el campo horizontal y si la
      zapa quedara en x=1 se cortaría por la derecha, así que se acerca al
@@ -98,7 +108,9 @@ export function initTechScene(canvas, model) {
      al 90% para que entre en el frame angosto; tablet y desktop quedan a
      tamaño original. */
   const SHOE_SCALE = { desktop: 1, tablet: 1, mobile: 0.9 };
-  model.position.set(SHOE_X.desktop, 0, 0);
+  /* En modo card (canvas del cuadrado de Talles en mobile) la zapa se centra
+     y se achica para llenar el marco sin cortarse. */
+  model.position.set(card ? 0 : SHOE_X.desktop, 0, 0);
   model.rotation.y = -0.6;
 
   scene.add(model);
@@ -123,8 +135,13 @@ export function initTechScene(canvas, model) {
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
   const toNDC = (e) => {
-    pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    /* Se mapea contra el rect real del canvas: en modo card el canvas es el
+       cuadrado de Talles (menor al viewport) y el raycast debe alinearse a él. */
+    const r = rect();
+    const rx = r.width || 1;
+    const ry = r.height || 1;
+    pointer.x = ((e.clientX - (r.left || 0)) / rx) * 2 - 1;
+    pointer.y = -((e.clientY - (r.top || 0)) / ry) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
   };
 
@@ -167,8 +184,17 @@ export function initTechScene(canvas, model) {
   canvas.addEventListener('pointercancel', endDrag);
 
   return {
-    /* Resize: aspect + tamaño del canvas. */
+    /* Resize: aspect + tamaño del canvas. En modo card se usa el rect del
+       elemento (cuadrado), no el viewport; si la card está oculta (width 0)
+       no se toca nada para no romper la cámara. */
     resize(w, h) {
+      if (card) {
+        const r = { width: rect().width || 1, height: rect().height || 1 };
+        camera.aspect = r.width / r.height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(r.width, r.height, false);
+        return;
+      }
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h, false);
@@ -177,8 +203,15 @@ export function initTechScene(canvas, model) {
        tablet/mobile para que no se salga del frame (ver SHOE_X), sube la
        zapa en mobile portrait (SHOE_Y), la achica en mobile (SHOE_SCALE,
        igual que el hero) y baja el pixel ratio en esos estados.
-       El drag/turntable no se tocan. */
+       El drag/turntable no se tocan.
+       En modo card siempre centra la zapa con escala propia. */
     layout(state) {
+      if (card) {
+        model.position.set(0, 0, 0);
+        model.scale.setScalar(0.8);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        return;
+      }
       const portrait = window.matchMedia('(orientation: portrait)').matches;
       if (state === 'mobile' && portrait) {
         model.position.set(0, SHOE_Y.mobile, 0);

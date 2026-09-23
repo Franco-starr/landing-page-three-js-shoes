@@ -41,19 +41,22 @@ const hideLoader = () => {
 
 /* Objetos creados al cargar el modelo y flags de qué escena está activa. */
 const scenes = {};
-const active = { hero: false, tech: false, talles: false };
+const active = { hero: false, tech: false, talles: false, tallesCard: false };
 let techRotating = false;
 
-/* Los 3 canvas fijos (z-index 0) apilados. Solo se muestra el de la
+/* Los canvas fijos (z-index 0) apilados. Solo se muestra el de la
    sección activa; si quedara más de uno visible, el opaco de arriba
-   taparía a los del fondo. */
+   taparía a los del fondo. El canvas de la card (`#webgl-talles-card`)
+   es chico y vive dentro del cuadrado de Talles en mobile portrait. */
 const canvases = {
   hero: document.querySelector('#webgl-hero'),
   tech: document.querySelector('#webgl-tech'),
   talles: document.querySelector('#webgl-talles')
 };
+const cardCanvas = document.querySelector('#webgl-talles-card');
 
 Object.values(canvases).forEach((c) => { c.style.visibility = 'hidden'; });
+cardCanvas.style.visibility = 'hidden';
 canvases.hero.style.visibility = 'visible';
 
 /* CARGA DEL MODELO: se carga el .glb una vez y se clona por escena
@@ -72,6 +75,7 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
   scenes.hero = initHeroScene(document.querySelector('#webgl-hero'), model.clone(true));
   scenes.tech = initTechScene(document.querySelector('#webgl-tech'), model.clone(true));
   scenes.talles = initTallesScene(document.querySelector('#webgl-talles'), model.clone(true));
+  scenes.tallesCard = initTechScene(cardCanvas, model.clone(true), { card: true });
 
   /* La escena del hero recién ahora existe: re-sincronizar para dejar la
      visibilidad de su canvas acorde a la sección activa (hero está arriba
@@ -134,6 +138,25 @@ function syncActive() {
   const key = currentScene();
   Object.keys(active).forEach((k) => { active[k] = false; });
   Object.keys(canvases).forEach((k) => { canvases[k].style.visibility = 'hidden'; });
+  cardCanvas.style.visibility = 'hidden';
+
+  /* En mobile portrait la zapa vive SOLO dentro de la card
+     (#webgl-talles-card): se oculta el tech full-screen apenas Talles
+     empieza a entrar al viewport (antes del reveal de features, que
+     quedaría como espacio vacío con la zapa full-screen). El fondo de
+     la sección ya es el mismo gris. */
+  const tallesFullless = key === 'tech'
+    && window.matchMedia('(max-width: 768px) and (orientation: portrait)').matches
+    && document.querySelector('#talles').getBoundingClientRect().top <= window.innerHeight;
+
+  if (tallesFullless) {
+    active.tallesCard = true;
+    cardCanvas.style.visibility = 'visible';
+    cardCanvas.style.pointerEvents = 'auto';
+    canvases.tech.style.pointerEvents = 'none';
+    return;
+  }
+
   if (key) {
     active[key] = true;
     canvases[key].style.visibility = 'visible';
@@ -219,6 +242,7 @@ function animate(t) {
 
   if (active.hero && scenes.hero) scenes.hero.render(t);
   if (active.tech && scenes.tech) scenes.tech.render(t, techRotating);
+  if (active.tallesCard && scenes.tallesCard) scenes.tallesCard.render(t, true);
   if (active.talles && scenes.talles) scenes.talles.render();
 }
 
@@ -273,7 +297,7 @@ let resizeRaf = null;
 function applyLayout(state) {
   if (lastLayoutState === state) return;
   lastLayoutState = state;
-  [scenes.hero, scenes.tech, scenes.talles].forEach((scene) => {
+  [scenes.hero, scenes.tech, scenes.talles, scenes.tallesCard].forEach((scene) => {
     if (scene && scene.layout) scene.layout(state);
   });
 }
@@ -304,6 +328,9 @@ function handleResize() {
       if (!scene) return;
       scene.resize(w, h);
     });
+    /* La card (cuadrado de Talles) mide su propio rect: se re-dimensiona
+       siempre por si cambió el tamaño del cuadrado. */
+    if (scenes.tallesCard) scenes.tallesCard.resize(w, h);
   }
 
   syncActive();

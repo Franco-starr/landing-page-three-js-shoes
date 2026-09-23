@@ -85,6 +85,16 @@ if (!reduceMotion) {
     const EXIT_DEFAULT = { items: 3.0, sub: 3.2, title: 3.4, curtain: 4.2, curtainDur: 0.6 };
     const exit = options.exit ?? EXIT_DEFAULT;
 
+    /* En mobile las features miden 100svh (igual que el stage sticky): si las
+       cards salieran al 65% del scrub quedaría un tramo de escenario vacío
+       antes de que Talles entre. Se comprime el exit contra el final del
+       recorrido: las cards se sostienen hasta ~85% y recién entonces salen
+       con el telón, justo cuando Talles ya cubre la pantalla. Reviews (200svh)
+       no usa este override y conserva el cadencia original. */
+    const exitMobile = options.exitMobile && isMobile
+      ? options.exitMobile
+      : exit;
+
     /* Una sola timeline por sección: entrada → espera → salida, recorrida
        sobre todo el tramo de la sección con scrub. Al subir se reproduce
        exactamente al revés, sin que dos timelines peleen por el mismo texto. */
@@ -100,15 +110,15 @@ if (!reduceMotion) {
     if (options.keepCurtain) {
       /* El negro queda arriba hasta que la sección termina, para que el
          switch a la escena oscura ocurra oculto. */
-      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, exit.items)
-        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, exit.sub)
-        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, exit.title);
+      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, exitMobile.items)
+        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, exitMobile.sub)
+        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, exitMobile.title);
     } else {
-      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, exit.items)
-        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, exit.sub)
-        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, exit.title)
-        .set(curtain, { transformOrigin: 'top center' }, exit.curtain)
-        .to(curtain, { scaleY: 0, duration: exit.curtainDur, ease: 'none' }, exit.curtain);
+      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, exitMobile.items)
+        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, exitMobile.sub)
+        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, exitMobile.title)
+        .set(curtain, { transformOrigin: 'top center' }, exitMobile.curtain)
+        .to(curtain, { scaleY: 0, duration: exitMobile.curtainDur, ease: 'none' }, exitMobile.curtain);
     }
   };
 
@@ -117,7 +127,10 @@ if (!reduceMotion) {
      telón abre de abajo hacia arriba (transform-origin top en el reveal) y
      revela la escena ya activa. Así nunca se ven cards flotando sobre el reveal. */
   sectionFade('.features', '.cards .card', {
-    exit: { items: 3.0, sub: 3.2, title: 3.4, curtain: 4.0, curtainDur: 0.6 }
+    exit: { items: 3.0, sub: 3.2, title: 3.4, curtain: 4.0, curtainDur: 0.6 },
+    /* En mobile se recorta la sección a 100svh: las cards se sostienen hasta
+       el final del recorrido y el exit se comprime contra el fin. */
+    exitMobile: { items: 3.9, sub: 4.02, title: 4.14, curtain: 4.55, curtainDur: 0.15 }
   });
   sectionFade('.reviews', '.review-card', {
     exit: { items: 3.0, sub: 3.2, title: 3.4, curtain: 4.0, curtainDur: 0.6 }
@@ -127,19 +140,27 @@ if (!reduceMotion) {
      TALLES
   ========================= */
 
-  gsap.fromTo('.sizes button', { y: 40, autoAlpha: 0 }, {
+  gsap.fromTo('.talles-card', { y: 24, autoAlpha: 0 }, {
     y: 0,
     autoAlpha: 1,
     duration: 0.5,
     ease: 'power3.out',
-    stagger: 0.06,
-    scrollTrigger: { trigger: '.sizes', start: 'top 80%' }
+    scrollTrigger: { trigger: '.talles-card', start: 'top bottom' }
+  });
+
+  gsap.fromTo('.sizes button', { y: 40, autoAlpha: 0 }, {
+    y: 0,
+    autoAlpha: 1,
+    duration: 0.4,
+    ease: 'power3.out',
+    stagger: 0.03,
+    scrollTrigger: { trigger: '.sizes', start: 'top bottom' }
   });
 
   gsap.fromTo('.talles-hint', { y: 12, autoAlpha: 0 }, {
     y: 0,
     autoAlpha: 1,
-    duration: 0.5,
+    duration: 0.4,
     ease: 'power3.out',
     scrollTrigger: { trigger: '.talles-hint', start: 'top 85%' }
   });
