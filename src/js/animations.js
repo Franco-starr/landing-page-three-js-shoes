@@ -204,17 +204,35 @@ if (!reduceMotion) {
      casi terminó el giro. Al subir, se revierte.
   ========================= */
 
-  gsap.set('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 0, y: 50 });
-  gsap.timeline({
-    scrollTrigger: {
-      trigger: '.cta-final',
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 1
+  gsap.matchMedia().add({
+    '(max-width: 768px)': () => {
+      /* En mobile el CTA se recorta a 200svh y el scrub tardío (0.72) nunca
+         llegaba a revelar el texto. Se reemplaza por una entrada que dispara
+         al llegar al FONDO de la sección (bottom bottom = 100% del viewport):
+         cualquier punto anterior a 100% es inalcanzable en la última sección. */
+      gsap.fromTo('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 0, y: 24 }, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power3.out',
+        stagger: 0.08,
+        scrollTrigger: { trigger: '.cta-final', start: 'bottom bottom', toggleActions: 'play reverse play reverse' }
+      });
     },
-    defaults: { ease: 'none' }
-  })
-    .to('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 1, y: 0, duration: 0.12, stagger: 0.06 }, 0.72);
+    '(min-width: 769px)': () => {
+      gsap.set('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 0, y: 50 });
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: '.cta-final',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1
+        },
+        defaults: { ease: 'none' }
+      })
+        .to('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 1, y: 0, duration: 0.12, stagger: 0.06 }, 0.72);
+    }
+  });
 
   gsap.to('.cta-final .btn-primary', {
     scale: 1.04,
