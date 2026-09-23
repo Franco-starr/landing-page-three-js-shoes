@@ -992,9 +992,12 @@ nav a:hover {
     justify-content: flex-end;
     align-items: center;
     background: #1a1a1a;
-    padding: 24px 0 calc(2rem + env(safe-area-inset-bottom, 0px));
+    /*padding: 24px 0 calc(2rem + env(safe-area-inset-bottom, 0px));*/
   }
 
+  /* Talles en mobile: la card es la zona de la zapa. touch-action:none evita
+     que el navegador robe el gesto de touch (sin pointercancel): al presionar
+     la card la zapa se rota con el drag y el scroll de la página no se mueve. */
   .talles-card {
     position: relative;
     display: block;
@@ -1005,12 +1008,86 @@ nav a:hover {
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
     overflow: hidden;
-    margin: 0 auto 20px;
+    margin: 0 auto 12px;
     pointer-events: auto;
+    touch-action: none;
   }
 
   .talles-grid {
     width: 100%;
     justify-content: center;
+  }
+
+  /* El formulario de Talles se achica en mobile para que card + título +
+     talles + precio/CTA entren en una pantalla (100svh) y nada quede cortado
+     por la nav fija: el espacio sobrante queda arriba, detrás de la barra. */
+  .talles .section-title {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+
+  .talles .section-sub {
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+  }
+
+  .talles .sizes {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .talles .sizes legend {
+    font-size: 0.78rem;
+    margin-bottom: 6px;
+  }
+
+  .talles .sizes button {
+    font-size: 0.92rem;
+    padding: 9px 0;
+  }
+
+  .talles .talles-actions {
+    gap: 12px;
+  }
+
+  .talles .talles-actions .price {
+    font-size: 1.5rem;
+  }
+
+  .talles .talles-actions .btn {
+    padding: 11px 24px;
+    font-size: 1rem;
+  }
+
+  .talles .talles-hint {
+    font-size: 0.75rem;
+    margin-top: 12px;
+  }
+
+  /* En celus muy bajitos (<=700px) la card se achica más para que card +
+     formulario quepan en la misma pantalla. */
+  @media (max-height: 700px) {
+    .talles-card {
+      width: min(46vw, 200px);
+      border-radius: 20px;
+    }
+
+    .talles .section-title {
+      font-size: 1.1rem;
+    }
+
+    .talles .section-sub {
+      font-size: 0.82rem;
+      margin-bottom: 10px;
+    }
+
+    .talles .sizes button {
+      padding: 7px 0;
+    }
+
+    .talles .talles-actions .btn {
+      padding: 9px 20px;
+      font-size: 0.92rem;
+    }
   }
 }
