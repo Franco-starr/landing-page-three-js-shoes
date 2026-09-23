@@ -41,7 +41,7 @@ export function initHeroScene(canvas, model) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   
   
@@ -355,7 +355,7 @@ export function initHeroScene(canvas, model) {
     resize(w, h) {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(w, h, false);
     },
     /* Layout responsive por estado: en desktop la zapa queda a escala 1 y el
        texto del piso a tamaño original. En tablet/celular se aplica la escala

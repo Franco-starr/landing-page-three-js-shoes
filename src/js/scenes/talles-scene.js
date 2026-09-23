@@ -2,8 +2,8 @@ import * as THREE from 'three';
 
 /* =========================
    ESCENA 3 - CTA FINAL
-   Fondo 0x9b51e0, cámara única (0,0,-2), la zapa
-   a la izquierda (x=-1.1), estática (sin turntable).
+   Fondo 0x9b51e0 (violeta), cámara única (0,0,-2), la
+   zapa a la izquierda (x=-1.1), estática (sin turntable).
    Se renderiza en el CTA final
    (el negro de Reseñas la tapa en el medio).
  ========================= */
@@ -11,7 +11,7 @@ import * as THREE from 'three';
 export function initTallesScene(canvas, model) {
   /* ESCENA + FONDO: fondo oscuro intermedio. */
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x000000);
+  scene.background = new THREE.Color(0x9b51e0);
 
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0). */
@@ -29,7 +29,7 @@ export function initTallesScene(canvas, model) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   /* PISO (sombra): igual que el resto de las escenas, en y=-1.3. */
@@ -91,6 +91,10 @@ export function initTallesScene(canvas, model) {
      SHOE_X: en tablet/mobile el aspect colapsa el campo horizontal y x=-1.1
      se cortaría por la izquierda; se acerca al centro (-0.6 / -0.45). */
   const SHOE_X = { desktop: -1.1, tablet: -0.6, mobile: -0.45 };
+  /* ESCALA RESPONSIVE de la zapa (igual que el hero): en mobile se achica
+     al 90% para que entre en el frame angosto; tablet y desktop quedan a
+     tamaño original. */
+  const SHOE_SCALE = { desktop: 1, tablet: 1, mobile: 0.9 };
   model.position.set(SHOE_X.desktop, 0, 0);
 
   /* POSE POR SCROLL: la zapa interpola desde la pose inicial (la clásica
@@ -107,14 +111,16 @@ export function initTallesScene(canvas, model) {
     resize(w, h) {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(w, h, false);
     },
     /* Layout responsive por estado: recorta el offset lateral de la zapa en
-       tablet/mobile para que no se salga del frame (ver SHOE_X) y baja el
-       pixel ratio en esos estados. La pose por scroll (setShoePose) solo
-       rota, así que no interfiere. */
+       tablet/mobile para que no se salga del frame (ver SHOE_X), la achica
+       en mobile (SHOE_SCALE, igual que el hero) y baja el pixel ratio en esos
+       estados. La pose por scroll (setShoePose) solo rota, así que no
+       interfiere. */
     layout(state) {
       model.position.x = SHOE_X[state] ?? SHOE_X.desktop;
+      model.scale.setScalar(SHOE_SCALE[state] ?? 1);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, state !== 'desktop' ? 1.5 : 2));
     },
     /* MOVIMIENTO DE LA ZAPA (CTA): p (0..1) llega desde el scroll y la

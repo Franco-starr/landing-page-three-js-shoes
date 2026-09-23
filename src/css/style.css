@@ -121,6 +121,8 @@ body {
 .webgl {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: 0;
   pointer-events: none;
 }
@@ -796,12 +798,83 @@ nav a:hover {
     justify-content: center;
   }
 
+  .features,
+  .reviews {
+    min-height: 200vh;
+    min-height: 200svh;
+  }
+
+  /* En mobile el CTA final se recorta (300svh base → 200svh): menos scroll
+     muerto, cada sección llega y se ve rápido. */
+  .cta-final {
+    min-height: 200vh;
+    min-height: 200svh;
+  }
+
+  /* Tecnología/Reseñas quedan como en desktop (stage sticky 100svh): el grid
+     pasa a 2 columnas con altura compacta (200svh) para que la info entre en
+     el viewport y el recorrido hasta Talles no se estire (sin scroll muerto). */
+  .features .container,
+  .reviews .container {
+    padding: 40px 0;
+  }
+
+  .features .section-title,
+  .reviews .section-title {
+    font-size: 1.6rem;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+
+  .features .section-sub,
+  .reviews .section-sub {
+    font-size: 0.92rem;
+    margin-bottom: 18px;
+  }
+
   .cards {
-    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .card-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  .card-icon svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .card h3 {
+    font-size: 0.92rem;
+    margin-bottom: 4px;
+  }
+
+  .card p {
+    font-size: 0.78rem;
+    line-height: 1.4;
   }
 
   .reviews-grid {
-    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .review-card {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .review-card p {
+    font-size: 0.82rem;
+    line-height: 1.5;
   }
 
   .talles-grid {
@@ -814,5 +887,66 @@ nav a:hover {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+  }
+}
+
+/* Celulares muy bajitos (ej. 640px de alto): achicar un toque más para que
+   las 6 cards nunca desborden el stage sticky de 100svh. */
+@media (max-width: 768px) and (max-height: 700px) {
+  .features .container,
+  .reviews .container {
+    padding: 28px 0;
+  }
+
+  .features .section-title,
+  .reviews .section-title {
+    font-size: 1.4rem;
+  }
+
+  .features .section-sub,
+  .reviews .section-sub {
+    margin-bottom: 12px;
+  }
+
+  .card {
+    padding: 10px;
+  }
+
+  .card-icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 6px;
+  }
+
+  .card-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .card h3 {
+    font-size: 0.85rem;
+  }
+
+  .card p {
+    font-size: 0.74rem;
+    line-height: 1.35;
+  }
+}
+
+/* En pantallas horizontales el stage sticky es bajito: las features pasan a
+   3 columnas para que las 6 cards entren en la altura del viewport. */
+@media (max-width: 992px) and (orientation: landscape) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Talles en mobile portrait: la zapa 3D queda arriba (la sube tech-scene) y
+   el formulario (título, números, precio y CTA) baja al fondo de la sección.
+   En landscape se mantiene centrado como desktop para no pisarse con la zapa. */
+@media (max-width: 768px) and (orientation: portrait) {
+  .talles {
+    align-items: flex-end;
+    padding: 24px 0 calc(2rem + env(safe-area-inset-bottom, 0px));
   }
 }

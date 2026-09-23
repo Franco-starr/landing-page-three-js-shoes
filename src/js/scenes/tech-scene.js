@@ -31,7 +31,7 @@ export function initTechScene(canvas, model) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   /* PISO (sombra): igual que el resto de las escenas, en y=-1.3. */
@@ -90,7 +90,14 @@ export function initTechScene(canvas, model) {
      SHOE_X: en tablet/mobile el aspect colapsa el campo horizontal y si la
      zapa quedara en x=1 se cortaría por la derecha, así que se acerca al
      centro (0.55). */
-  const SHOE_X = { desktop: 1, tablet: 0.55, mobile: 0.55 };
+  const SHOE_X = { desktop: 1, tablet: 0.55, mobile: 0 };
+  /* En mobile portrait la zapa sube a la mitad superior (el formulario de
+     Talles queda abajo). En landscape y en desktop/tablet se mantiene en 0. */
+  const SHOE_Y = { desktop: 0, tablet: 0, mobile: 0.75 };
+  /* ESCALA RESPONSIVE de la zapa (igual que el hero): en mobile se achica
+     al 90% para que entre en el frame angosto; tablet y desktop quedan a
+     tamaño original. */
+  const SHOE_SCALE = { desktop: 1, tablet: 1, mobile: 0.9 };
   model.position.set(SHOE_X.desktop, 0, 0);
   model.rotation.y = -0.6;
 
@@ -164,13 +171,21 @@ export function initTechScene(canvas, model) {
     resize(w, h) {
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(w, h, false);
     },
     /* Layout responsive por estado: recorta el offset lateral de la zapa en
-       tablet/mobile para que no se salga del frame (ver SHOE_X) y baja el
-       pixel ratio en esos estados. El drag/turntable no se tocan. */
+       tablet/mobile para que no se salga del frame (ver SHOE_X), sube la
+       zapa en mobile portrait (SHOE_Y), la achica en mobile (SHOE_SCALE,
+       igual que el hero) y baja el pixel ratio en esos estados.
+       El drag/turntable no se tocan. */
     layout(state) {
-      model.position.x = SHOE_X[state] ?? SHOE_X.desktop;
+      const portrait = window.matchMedia('(orientation: portrait)').matches;
+      if (state === 'mobile' && portrait) {
+        model.position.set(0, SHOE_Y.mobile, 0);
+      } else {
+        model.position.set(SHOE_X[state] ?? SHOE_X.desktop, 0, 0);
+      }
+      model.scale.setScalar(SHOE_SCALE[state] ?? 1);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, state !== 'desktop' ? 1.5 : 2));
     },
     /* MOVIMIENTO DE LA ZAPA: turntable solo en la sección Talles.
@@ -186,7 +201,7 @@ export function initTechScene(canvas, model) {
       if (lastT === null) lastT = t;
       const dt = Math.min((t - lastT) / 1000, 0.1);
       lastT = t;
-      if (rotating && !dragging) spin += dt * 0.25;
+      if (rotating && !dragging) spin += dt * 0.3;
       model.rotation.y = -0.6 + spin + drag.y;
       model.rotation.x = drag.x;
       renderer.render(scene, camera);

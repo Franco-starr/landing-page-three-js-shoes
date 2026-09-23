@@ -100,13 +100,13 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
    Cada corte cae cuando el telón negro de la sección entrante cubre
    toda la pantalla, así el cambio de color nunca se ve:
    - hero (naranja) hasta que features tapa (top 0).
-- tech (celeste) en Tecnología y Elegí tu talle, hasta que Reseñas
+   - tech (celeste) en Tecnología y Elegí tu talle, hasta que Reseñas
      tapa (top 0, s≈450) → null (negro puro, sin escena colada).
-     La zapa gira solo en la sección Talles (flag rotate);
-     en Tecnología se muestra estática.
    - talles (violeta) se pre-activa mientras Reseñas ocupa toda la
-     pantalla (cta top <= 1.5*vh, s≈550) y su telón tapa todo; queda
+     pantalla (cta top <= 2*vh) y su telón tapa todo; queda
      oculto y aparece con el scroll hacia el final. Ahí la zapa ya no gira.
+   La ROTACIÓN del turntable no va acá: la maneja un ScrollTrigger propio
+   con el mismo rango que el scrub de features (abajo), no el tope de Talles.
  ========================= */
 
 /* Los cortes se miden contra innerHeight de ARRANQUE: las secciones están
@@ -114,34 +114,30 @@ loader.load('./model/nike_air_zoom_pegasus_36.glb', (gltf) => {
    de carga en mobile). Usar el layout viewport (clientHeight, más grande)
    retrasaría el pre-activado de Talles y el switch se vería. */
 const couple = [
-  ['hero',   false, document.querySelector('.hero'),            0],
-  ['tech',   false, document.querySelector('.features'),        0],
-  ['tech',   true,  document.querySelector('#talles'),          window.innerHeight],
-  [null,     false, document.querySelector('.reviews'),         0],
-  ['talles', false, document.querySelector('.cta-final'),       window.innerHeight * 1.5]
+  ['hero',   document.querySelector('.hero'),            0],
+  ['tech',   document.querySelector('.features'),        0],
+  [null,     document.querySelector('.reviews'),         0],
+  ['talles', document.querySelector('.cta-final'),       window.innerHeight * 2.0]
 ];
 
 function currentScene() {
   let key = null;
-  let rotate = false;
-  for (const [k, rot, el, th] of couple) {
+  for (const [k, el, th] of couple) {
     if (el.getBoundingClientRect().top <= th) {
       key = k;
-      rotate = rot;
     }
   }
-  return { key, rotate };
+  return key;
 }
 
 function syncActive() {
-  const { key, rotate } = currentScene();
+  const key = currentScene();
   Object.keys(active).forEach((k) => { active[k] = false; });
   Object.keys(canvases).forEach((k) => { canvases[k].style.visibility = 'hidden'; });
   if (key) {
     active[key] = true;
     canvases[key].style.visibility = 'visible';
   }
-  techRotating = rotate;
 
   /* Drag con el mouse sobre la zapa: el canvas tech solo captura eventos
      cuando la sección Talles está al 100% (top <= 0). Al salir (Reseñas)
@@ -188,6 +184,27 @@ function initShoeScroll() {
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.config({ ignoreMobileResize: true });
 initShoeScroll();
+
+/* =========================
+   TURNTABLE - ENCENDIDO POR SCRUB DE FEATURES
+   La zapa gira durante el tramo final de Tecnología y durante Talles.
+   Se usa EXACTAMENTE el mismo rango que la timeline de features en
+   animations.js (start 'top bottom' → end 'bottom top'): apenas el
+   scrub pasa ~45% (mientras las cards aún se leen), la zapa arranca a
+   girar DETRÁS del telón y ya está girando cuando el telón levanta y
+   entra a Talles. Al subir el scroll, revierte.
+   Así el encendido escala con la altura real de features (200/250svh)
+   en vez de clavar el umbral al tope de #talles, que era tarde.
+ ========================= */
+
+ScrollTrigger.create({
+  trigger: '.features',
+  start: 'top bottom',
+  end: 'bottom top',
+  onUpdate: (self) => {
+    techRotating = self.progress > 0.45;
+  }
+});
 
 /* =========================
    RENDER LOOP

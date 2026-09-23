@@ -65,34 +65,63 @@ if (!reduceMotion) {
     gsap.set(curtain, { scaleY: 0 });
     gsap.set(`${title}, ${sub}, ${items}`, { autoAlpha: 0, y: 40 });
 
+    /* En mobile (<=768px) la entrada se adelanta y se comprime: el contenido
+       queda legible antes de que el stage se clave en pantalla. El scrub con
+       lag de 1s hacía que las cards aparecieran "tarde" (recién al salir de la
+       sección). Desktop conserva la cadencia original. */
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const curtainDur = isMobile ? 0.4 : 0.6;
+    const titleAt = isMobile ? 0.5 : 0.7;
+    const subAt = isMobile ? 0.55 : 0.8;
+    const itemsAt = isMobile ? 0.68 : 0.9;
+    const itemsStagger = isMobile ? 0.07 : 0.04;
+
+    /* Cuándo se esconde el contenido y se abre el telón, sobre la timeline.
+       Default: las cards salen temprano y el telón abre al final del recorrido
+       (comportamiento original de reviews). En features se pasa otro exit para
+       que las cards se sostengan hasta el final y, mientras salen, el telón YA
+       se está levantando: la escena 3D queda a la vista de inmediato, sin
+       huecos negros entre el fade de las cards y el reveal. */
+    const EXIT_DEFAULT = { items: 3.0, sub: 3.2, title: 3.4, curtain: 4.2, curtainDur: 0.6 };
+    const exit = options.exit ?? EXIT_DEFAULT;
+
     /* Una sola timeline por sección: entrada → espera → salida, recorrida
        sobre todo el tramo de la sección con scrub. Al subir se reproduce
        exactamente al revés, sin que dos timelines peleen por el mismo texto. */
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: selector, start: 'top bottom', end: 'bottom top', scrub: 1 }
+      scrollTrigger: { trigger: selector, start: 'top bottom', end: 'bottom top', scrub: isMobile ? 0.4 : 1 }
     });
 
-    tl.to(curtain, { scaleY: 1, duration: 0.6, ease: 'none', immediateRender: false }, 0)
-      .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, 0.7)
-      .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, 0.8)
-      .to(items, { autoAlpha: 1, y: 0, stagger: 0.04, ease: 'none' }, 0.9);
+    tl.to(curtain, { scaleY: 1, duration: curtainDur, ease: 'none', immediateRender: false }, 0)
+      .to(title, { autoAlpha: 1, y: 0, ease: 'none' }, titleAt)
+      .to(sub, { autoAlpha: 1, y: 0, ease: 'none' }, subAt)
+      .to(items, { autoAlpha: 1, y: 0, stagger: itemsStagger, ease: 'none' }, itemsAt);
 
     if (options.keepCurtain) {
       /* El negro queda arriba hasta que la sección termina, para que el
          switch a la escena oscura ocurra oculto. */
-      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, 3.0)
-        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 3.2)
-        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 3.4);
+      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, exit.items)
+        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, exit.sub)
+        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, exit.title);
     } else {
-      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, 3.0)
-        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, 3.2)
-        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, 3.4)
-        .to(curtain, { scaleY: 0, duration: 0.6, ease: 'none' }, 4.2);
+      tl.to(items, { autoAlpha: 0, y: -40, stagger: 0.04, ease: 'none' }, exit.items)
+        .to(sub, { autoAlpha: 0, y: -40, ease: 'none' }, exit.sub)
+        .to(title, { autoAlpha: 0, y: -40, ease: 'none' }, exit.title)
+        .set(curtain, { transformOrigin: 'top center' }, exit.curtain)
+        .to(curtain, { scaleY: 0, duration: exit.curtainDur, ease: 'none' }, exit.curtain);
     }
   };
 
-  sectionFade('.features', '.cards .card');
-  sectionFade('.reviews', '.review-card', { keepCurtain: true });
+  /* En features y reviews el contenido (cards/sub/título) sale COMPLETO con el
+     telón cerrado (fade sobre negro, sin overlap visible); recién después el
+     telón abre de abajo hacia arriba (transform-origin top en el reveal) y
+     revela la escena ya activa. Así nunca se ven cards flotando sobre el reveal. */
+  sectionFade('.features', '.cards .card', {
+    exit: { items: 3.0, sub: 3.2, title: 3.4, curtain: 4.0, curtainDur: 0.6 }
+  });
+  sectionFade('.reviews', '.review-card', {
+    exit: { items: 3.0, sub: 3.2, title: 3.4, curtain: 4.0, curtainDur: 0.6 }
+  });
 
   /* =========================
      TALLES
