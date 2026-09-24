@@ -190,6 +190,39 @@ syncActive();
 function applyShoePose(progress) {
   if (!scenes.talles || !scenes.talles.setShoePose) return;
   scenes.talles.setShoePose(progress);
+  syncCtaText(progress);
+}
+
+/* En mobile el texto del CTA se sincroniza con el progreso de la zapa: al
+   entrar en el último tramo (progress >= 0.9, cuando la zapa queda en su pose
+   final) el texto se revela. Sin depender de la geometría del viewport, que
+   con la barra de URL y la sección de 200svh descuadra los triggers. */
+const mqCtaMobile = window.matchMedia('(max-width: 768px)');
+const ctaReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let ctaTextTween = null;
+
+function syncCtaText(progress) {
+  if (!mqCtaMobile.matches || ctaReduceMotion) return;
+  if (!ctaTextTween) {
+    ctaTextTween = gsap.fromTo(
+      '.cta-final h2, .cta-final p, .cta-final .btn',
+      { autoAlpha: 0, y: 24 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power3.out',
+        stagger: 0.08,
+        paused: true,
+        immediateRender: true
+      }
+    );
+  }
+  if (progress >= 0.9) {
+    ctaTextTween.play();
+  } else {
+    ctaTextTween.reverse();
+  }
 }
 
 let shoeTrigger = null;

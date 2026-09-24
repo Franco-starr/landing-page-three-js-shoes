@@ -834,6 +834,22 @@ nav a:hover {
     min-height: 200svh;
   }
 
+  /* El texto/CTA se fija al viewport para que nunca se pierda por el sticky:
+     en mobile la barra de URL estira el scroll real más allá del despegue del
+     sticky y el texto se iba por arriba. Fijo (inset 0, texto abajo) queda
+     siempre visible y no depende de la geometría del scroll. */
+  .cta-final .container {
+    position: fixed;
+    inset: 0;
+    align-items: flex-end;
+    padding-bottom: 28px;
+    pointer-events: none;
+  }
+
+  .cta-final .container .btn {
+    pointer-events: auto;
+  }
+
   /* Tecnología/Reseñas quedan como en desktop (stage sticky 100svh): el grid
      pasa a 2 columnas con altura compacta (200svh) para que la info entre en
      el viewport y el recorrido hasta Talles no se estire (sin scroll muerto). */
