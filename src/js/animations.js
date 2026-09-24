@@ -19,12 +19,11 @@ if (!reduceMotion) {
 
       event.preventDefault();
 
-      /* En mobile el texto del CTA es fixed: si navegamos con un ancla queda
-         superpuesto sobre las otras secciones. Se oculta al instante antes de
-         iniciar el scroll (main.js escucha 'cta:hide'). */
-      if (window.matchMedia('(max-width: 768px)').matches) {
-        window.dispatchEvent(new CustomEvent('cta:hide'));
-      }
+      /* El texto/CTA del final se oculta al instante antes de iniciar el
+         scroll (main.js escucha 'cta:hide'), para que no quede superpuesto
+         sobre las otras secciones durante el scroll suave. Aplica en desktop
+         y mobile. */
+      window.dispatchEvent(new CustomEvent('cta:hide'));
 
       /* En Tecnología y Reseñas el contenido vive en un stage sticky dentro
          de una sección de 250vh. Aterrizar justo en el tope deja la entrada
@@ -209,23 +208,9 @@ if (!reduceMotion) {
      La zapa 3D gira durante todo el tramo visible (ver main.js) y el
      texto/CTA aparecen recién en el ÚLTIMO tramo, cuando la zapa ya
      casi terminó el giro. Al subir, se revierte.
+     El reveal/ocultado del texto lo maneja main.js (syncCtaText), con
+     un único mecanismo para desktop y mobile.
   ========================= */
-
-  gsap.matchMedia().add({
-    '(min-width: 769px)': () => {
-      gsap.set('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 0, y: 50 });
-      gsap.timeline({
-        scrollTrigger: {
-          trigger: '.cta-final',
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1
-        },
-        defaults: { ease: 'none' }
-      })
-        .to('.cta-final h2, .cta-final p, .cta-final .btn', { autoAlpha: 1, y: 0, duration: 0.12, stagger: 0.06 }, 0.72);
-    }
-  });
 
   gsap.to('.cta-final .btn-primary', {
     scale: 1.04,

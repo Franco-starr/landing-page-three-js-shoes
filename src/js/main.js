@@ -193,39 +193,43 @@ function applyShoePose(progress) {
   syncCtaText(progress);
 }
 
-/* En mobile el texto del CTA se sincroniza con el progreso de la zapa: al
-   entrar en el último tramo (progress >= 0.9, cuando la zapa queda en su pose
-   final) el texto se revela. Sin depender de la geometría del viewport, que
-   con la barra de URL y la sección de 200svh descuadra los triggers. */
-const mqCtaMobile = window.matchMedia('(max-width: 768px)');
+/* El texto/CTA del final se sincroniza con el progreso de la zapa en desktop
+   Y mobile (un único mecanismo, sin depender de la geometría del viewport):
+   se revela recién en el último tramo (progress >= 0.9, cuando la zapa queda
+   en su pose final) y se oculta al instante al salir.
+   El tween se crea al cargar con immediateRender para que el texto arranque
+   oculto en ambos breakpoints. */
 const ctaReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let ctaTextTween = null;
 let ctaTextLocked = false;
 
+if (!ctaReduceMotion) {
+  ctaTextTween = gsap.fromTo(
+    '.cta-final h2, .cta-final p, .cta-final .btn',
+    { autoAlpha: 0, y: 24 },
+    {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.5,
+      ease: 'power3.out',
+      stagger: 0.08,
+      paused: true,
+      immediateRender: true
+    }
+  );
+}
+
 function syncCtaText(progress) {
-  if (!mqCtaMobile.matches || ctaReduceMotion) return;
-  if (!ctaTextTween) {
-    ctaTextTween = gsap.fromTo(
-      '.cta-final h2, .cta-final p, .cta-final .btn',
-      { autoAlpha: 0, y: 24 },
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power3.out',
-        stagger: 0.08,
-        paused: true,
-        immediateRender: true
-      }
-    );
-  }
+  if (!ctaTextTween) return;
   if (progress >= 0.9) {
     /* Durante una navegación con ancla (ctaTextLocked) no re-revelar: el
        texto queda oculto hasta salir del tramo del CTA (progress < 0.9). */
     if (!ctaTextLocked) ctaTextTween.play();
   } else {
+    /* Ocultamiento INSTANTÁNEO al salir del tramo (no una reversa animada):
+       el texto nunca queda flotando sobre otras secciones durante el scroll. */
     ctaTextLocked = false;
-    ctaTextTween.reverse();
+    ctaTextTween.progress(0).pause();
   }
 }
 
@@ -234,10 +238,8 @@ function syncCtaText(progress) {
    al instante y se bloquea para que no reaparezca en el tramo del CTA mientras
    dura el scroll. Al volver al CTA desde arriba, syncCtaText lo re-revela. */
 function hideCtaTextNow() {
-  if (!mqCtaMobile.matches || ctaReduceMotion) return;
-  if (ctaTextTween) {
-    ctaTextTween.progress(0).pause();
-  }
+  if (!ctaTextTween) return;
+  ctaTextTween.progress(0).pause();
   ctaTextLocked = true;
 }
 
