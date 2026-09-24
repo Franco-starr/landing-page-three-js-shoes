@@ -12,20 +12,13 @@ if (!reduceMotion) {
      SCROLL SUAVE A ANCLAS
   ========================= */
 
-  /* Mientras dura el scroll programático a un ancla los snaps de Talles
-     y del CTA se deshabilitan (setEnabled(false)), porque atraen el
-     scroll hacia el centro/fondo y descuadran el destino al aterrizar. Se
-     re-habilitan en onComplete una vez asentado el aterrizaje. */
-  const disableNavSnaps = () => {
-    tallesSnap?.setEnabled(false);
-    ctaSnap?.setEnabled(false);
-  };
-
-  const enableNavSnaps = () => {
-    tallesSnap?.setEnabled(true);
-    ctaSnap?.setEnabled(true);
-    ScrollTrigger.update();
-  };
+  /* Flag compartido de navegación: mientras dura el scroll programático a
+     un ancla, los mini-forceos de Talles y del CTA lo leen y devuelven
+     "undefined" (no atraen el scroll), así el destino no se descuadra al
+     aterrizar. Reemplaza al viejo par disable/enableNavSnaps, que
+     dependía de setEnabled() (un método que este build de ScrollTrigger
+     no expone sobre las instancias creadas con scroll snap). */
+  let navAnchoring = false;
 
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -52,10 +45,11 @@ if (!reduceMotion) {
       const isStage = target.matches('.features, .reviews');
       const finalY = target.getBoundingClientRect().top + window.scrollY + (isStage && !mqNavMobile.matches ? window.innerHeight * 0.25 : 0);
 
-      /* Al navegar con un ancla en mobile el mini-forceo de Talles y el snap
-         del CTA (que atraen el scroll) se deshabilitan mientras dura el scroll
-         programático, para que el destino no se descuadre al aterrizar. */
-      disableNavSnaps();
+      /* Al navegar con un ancla el flag compartido se enciende: mientras dura
+         el scroll programático los mini-forceos de Talles y del CTA leen ese
+         flag y devuelven undefined (no atraen el scroll), así el destino no se
+         descuadra al aterrizar. */
+      navAnchoring = true;
 
       gsap.to(window, {
         scrollTo: finalY,
@@ -63,7 +57,11 @@ if (!reduceMotion) {
         ease: 'power3.inOut',
         onComplete: () => {
           window.scrollTo(0, finalY);
-          enableNavSnaps();
+          /* Se apaga el flag compartido recién cuando el scroll programático
+             terminó de asentarse: los mini-forceos de Talles y del CTA vuelven
+             a atraer. ScrollTrigger.update() recalcula los snaps ya con el
+             destino fijo. */
+          navAnchoring = false;
           ScrollTrigger.update();
         }
       });
@@ -202,8 +200,14 @@ if (!reduceMotion) {
     start: 'top center',
     end: 'bottom center',
     snap: {
+      /* Mientras dura la navegación por ancla (navAnchoring true) se devuelve
+         "undefined" y el mini-forceo no atrae el scroll, así el destino no se
+         descuadra al aterrizar. Fuera de esa ventana se atrae suavemente hasta
+         el 0.5 del recorrido (Talles centrada). */
       snapTo: (progress) =>
-        (progress >= 0.25 && progress <= 0.75) ? 0.5 : undefined,
+        (navAnchoring
+          ? undefined
+          : (progress >= 0.25 && progress <= 0.75) ? 0.5 : undefined),
       duration: { min: 0.2, max: 0.5 },
       ease: 'power2.inOut'
     }
@@ -218,7 +222,11 @@ if (!reduceMotion) {
     start: 'top bottom',
     end: 'bottom bottom',
     snap: {
-      snapTo: (progress) => (progress >= 0.8 ? 1 : undefined),
+      /* Igual que Talles: mientras dura la navegación por ancla se devuelve
+         "undefined" (no atrae al fondo), y fuera de esa ventana se atrae al
+         100% cuando el progreso pasa el 80% del tramo del CTA final. */
+      snapTo: (progress) =>
+        (navAnchoring ? undefined : (progress >= 0.8 ? 1 : undefined)),
       duration: { min: 0.2, max: 0.45 },
       ease: 'power2.inOut'
     }

@@ -11,7 +11,7 @@ import * as THREE from 'three';
 export function initTallesScene(canvas, model) {
   /* ESCENA + FONDO: fondo oscuro intermedio. */
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x9b51e0);
+  scene.background = new THREE.Color(0x00000);
 
   /* CÁMARA: única en todas las escenas.
      Mirando desde (0,0,-2) hacia el origen (0,0,0). */
