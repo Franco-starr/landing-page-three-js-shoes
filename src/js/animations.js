@@ -12,6 +12,21 @@ if (!reduceMotion) {
      SCROLL SUAVE A ANCLAS
   ========================= */
 
+  /* Mientras dura el scroll programático a un ancla los snaps de Talles
+     y del CTA se deshabilitan (setEnabled(false)), porque atraen el
+     scroll hacia el centro/fondo y descuadran el destino al aterrizar. Se
+     re-habilitan en onComplete una vez asentado el aterrizaje. */
+  const disableNavSnaps = () => {
+    tallesSnap?.setEnabled(false);
+    ctaSnap?.setEnabled(false);
+  };
+
+  const enableNavSnaps = () => {
+    tallesSnap?.setEnabled(true);
+    ctaSnap?.setEnabled(true);
+    ScrollTrigger.update();
+  };
+
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {
       const target = document.querySelector(link.getAttribute('href'));
@@ -26,14 +41,21 @@ if (!reduceMotion) {
       window.dispatchEvent(new CustomEvent('cta:hide'));
 
       /* En Tecnología y Reseñas el contenido vive en un stage sticky dentro
-         de una sección de 250vh. Aterrizar justo en el tope deja la entrada
-         del scrub a medias (sobre todo en Reseñas). Bajamos apenas pasado
-         el tope para que la entrada ya esté completa y se vea toda la sección
-         (el stage sigue llenando la pantalla de igual forma).
-         El destino final se calcula explícito y se fuerza en onComplete para
-         que el scroll nunca se quede corto aunque la animación se interrumpa. */
+         de una sección de 250vh en desktop: aterrizar justo en el tope deja la
+         entrada del scrub a medias (sobre todo en Reseñas), así que en
+         desktop bajamos apenas pasado el tope. En mobile las secciones son
+         short/sticky y el offset descuadra todo: ahí se aterriza en el tope
+         EXACTO. El destino se calcula explícito y se fuerza en onComplete
+         para que el scroll nunca se quede corto aunque la animación se
+         interrumpa. */
+      const mqNavMobile = window.matchMedia('(max-width: 768px)');
       const isStage = target.matches('.features, .reviews');
-      const finalY = target.getBoundingClientRect().top + window.scrollY + (isStage ? window.innerHeight * 0.25 : 0);
+      const finalY = target.getBoundingClientRect().top + window.scrollY + (isStage && !mqNavMobile.matches ? window.innerHeight * 0.25 : 0);
+
+      /* Al navegar con un ancla en mobile el mini-forceo de Talles y el snap
+         del CTA (que atraen el scroll) se deshabilitan mientras dura el scroll
+         programático, para que el destino no se descuadre al aterrizar. */
+      disableNavSnaps();
 
       gsap.to(window, {
         scrollTo: finalY,
@@ -41,6 +63,7 @@ if (!reduceMotion) {
         ease: 'power3.inOut',
         onComplete: () => {
           window.scrollTo(0, finalY);
+          enableNavSnaps();
           ScrollTrigger.update();
         }
       });
@@ -172,8 +195,9 @@ if (!reduceMotion) {
   });
 
   /* Mini forceo: al pasar cerca de Talles el scroll se atrae suave
-     hasta dejarla centrada verticalmente (progreso 0.5 del rango). */
-  ScrollTrigger.create({
+     hasta dejarla centrada verticalmente (progreso 0.5 del rango). Guardado
+     en tallesSnap para poder deshabilitarlo durante el scroll de anclas. */
+  const tallesSnap = ScrollTrigger.create({
     trigger: '.talles',
     start: 'top center',
     end: 'bottom center',
@@ -189,7 +213,7 @@ if (!reduceMotion) {
      tramo (≥80% del recorrido de la sección) se atrae solo hasta el
      fondo, asentando la pose final de la zapa y el texto/CTA ya
      revelados. Mismo estilo que el de Talles. */
-  ScrollTrigger.create({
+  const ctaSnap = ScrollTrigger.create({
     trigger: '.cta-final',
     start: 'top bottom',
     end: 'bottom bottom',
