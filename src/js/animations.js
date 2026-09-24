@@ -19,6 +19,13 @@ if (!reduceMotion) {
 
       event.preventDefault();
 
+      /* En mobile el texto del CTA es fixed: si navegamos con un ancla queda
+         superpuesto sobre las otras secciones. Se oculta al instante antes de
+         iniciar el scroll (main.js escucha 'cta:hide'). */
+      if (window.matchMedia('(max-width: 768px)').matches) {
+        window.dispatchEvent(new CustomEvent('cta:hide'));
+      }
+
       /* En Tecnología y Reseñas el contenido vive en un stage sticky dentro
          de una sección de 250vh. Aterrizar justo en el tope deja la entrada
          del scrub a medias (sobre todo en Reseñas). Bajamos apenas pasado

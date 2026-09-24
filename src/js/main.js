@@ -200,6 +200,7 @@ function applyShoePose(progress) {
 const mqCtaMobile = window.matchMedia('(max-width: 768px)');
 const ctaReduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let ctaTextTween = null;
+let ctaTextLocked = false;
 
 function syncCtaText(progress) {
   if (!mqCtaMobile.matches || ctaReduceMotion) return;
@@ -219,11 +220,28 @@ function syncCtaText(progress) {
     );
   }
   if (progress >= 0.9) {
-    ctaTextTween.play();
+    /* Durante una navegación con ancla (ctaTextLocked) no re-revelar: el
+       texto queda oculto hasta salir del tramo del CTA (progress < 0.9). */
+    if (!ctaTextLocked) ctaTextTween.play();
   } else {
+    ctaTextLocked = false;
     ctaTextTween.reverse();
   }
 }
+
+/* Al navegar con un ancla (nav, CTA button) el texto fijo del CTA quedaría
+   superpuesto sobre las otras secciones durante el scroll suave: se oculta
+   al instante y se bloquea para que no reaparezca en el tramo del CTA mientras
+   dura el scroll. Al volver al CTA desde arriba, syncCtaText lo re-revela. */
+function hideCtaTextNow() {
+  if (!mqCtaMobile.matches || ctaReduceMotion) return;
+  if (ctaTextTween) {
+    ctaTextTween.progress(0).pause();
+  }
+  ctaTextLocked = true;
+}
+
+window.addEventListener('cta:hide', hideCtaTextNow);
 
 let shoeTrigger = null;
 
