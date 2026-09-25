@@ -836,14 +836,33 @@ nav a:hover {
 
   /* El texto/CTA se fija al viewport para que nunca se pierda por el sticky:
      en mobile la barra de URL estira el scroll real más allá del despegue del
-     sticky y el texto se iba por arriba. Fijo (inset 0, texto abajo) queda
-     siempre visible y no depende de la geometría del scroll. */
+     sticky y el texto se iba por arriba. Fijo (inset 0) queda siempre visible
+     y no depende de la geometría del scroll. En mobile se reparte en el
+     viewport: título grande ARRIBA (debajo de la nav), el medio queda libre
+     para la zapa 3D y el subtítulo + CTA quedan ABJO, todo centrado. */
   .cta-final .container {
     position: fixed;
     inset: 0;
-    align-items: flex-end;
-    padding-bottom: 28px;
+    align-items: stretch;
+    padding-top: calc(72px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
     pointer-events: none;
+  }
+
+  /* El contenido pasa a un flex column de alto completo: el h2 queda arriba
+     (padding-top del container) y el p con margin-top:auto empuja subtítulo +
+     botón hacia el fondo, dejando el centro vacío para la zapa 3D. */
+  .cta-final .container .cta-final-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .cta-final .container .cta-final-content p {
+    margin-top: auto;
   }
 
   .cta-final .container .btn {

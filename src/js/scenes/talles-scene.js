@@ -90,11 +90,11 @@ export function initTallesScene(canvas, model) {
      dejando espacio para el selector de talles a la derecha.
      SHOE_X: en tablet/mobile el aspect colapsa el campo horizontal y x=-1.1
      se cortaría por la izquierda; se acerca al centro (-0.6 / -0.45). */
-  const SHOE_X = { desktop: -0.6, tablet: -0.6, mobile: -0.45 };
+  const SHOE_X = { desktop: -0.6, tablet: -0.6, mobile: 0.15 };
   /* ESCALA RESPONSIVE de la zapa (igual que el hero): en mobile se achica
      al 90% para que entre en el frame angosto; tablet y desktop quedan a
      tamaño original. */
-  const SHOE_SCALE = { desktop: 1, tablet: 1, mobile: 0.9 };
+  const SHOE_SCALE = { desktop: 1, tablet: 1, mobile: 0.88 };
   model.position.set(SHOE_X.desktop, 0, 0);
 
   /* POSE POR SCROLL: la zapa interpola desde la pose inicial (la clásica
